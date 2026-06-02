@@ -17,20 +17,63 @@
           关于
         </NuxtLink>
         <span class="text-gray-300">|</span>
-        <span class="text-gray-600">{{ user?.username }}</span>
+
+        <!-- 用户下拉菜单 -->
+        <div class="relative" @mouseenter="menuOpen = true" @mouseleave="menuOpen = false">
+          <button @click="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
+            {{ user?.username }}
+            <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': menuOpen }" />
+          </button>
+
+          <!-- 下拉框 -->
+          <div v-if="menuOpen"
+            class="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50"
+            @mouseenter="menuOpen = true" @mouseleave="menuOpen = false">
+            <button @click="showClearConfirm = true; menuOpen = false"
+              class="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+              <Trash2 class="w-4 h-4" />
+              清空进度
+            </button>
+          </div>
+        </div>
+
         <button @click="handleLogout" class="text-gray-400 hover:text-red-500 text-xs transition-colors">
           退出
         </button>
       </nav>
     </div>
+
+    <!-- 清空进度确认弹窗 -->
+    <ConfirmDialog
+      :show="showClearConfirm"
+      title="清空所有进度"
+      message="确定要清除所有打卡记录吗？此操作不可恢复！"
+      confirm-text="确认清空"
+      @confirm="handleClearProgress"
+      @cancel="showClearConfirm = false"
+    />
   </header>
 </template>
 
 <script setup lang="ts">
-import { BookOpen } from 'lucide-vue-next'
+import { BookOpen, ChevronDown, Trash2 } from 'lucide-vue-next'
 const { user, logout } = useAuth()
+
+const menuOpen = ref(false)
+const showClearConfirm = ref(false)
 
 async function handleLogout() {
   await logout()
+}
+
+async function handleClearProgress() {
+  showClearConfirm.value = false
+  try {
+    await $fetch('/api/checkins/clear', { method: 'POST' })
+    // 刷新页面重置所有数据
+    window.location.reload()
+  } catch {
+    alert('清空失败，请重试')
+  }
 }
 </script>
