@@ -1,7 +1,6 @@
 import { defineEventHandler, readBody, createError, setCookie } from 'h3'
 import bcrypt from 'bcryptjs'
 import { getDb } from '../../db/index'
-import { createSession } from '../../middleware/auth'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

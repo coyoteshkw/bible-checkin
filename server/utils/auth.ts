@@ -1,5 +1,5 @@
 import { getDb } from '../db/index'
-import { defineEventHandler, getCookie, setCookie, deleteCookie, createError } from 'h3'
+import { getCookie, setCookie, deleteCookie, createError } from 'h3'
 import crypto from 'crypto'
 
 // 生成 session token
@@ -34,7 +34,7 @@ export function getSessionUser(token: string): { id: number; username: string; e
   return row || null
 }
 
-// 需要登录的 API 中间件
+// 需要登录的 API 助手
 export function requireAuth(event: any): { id: number; username: string; email: string } {
   const token = getCookie(event, 'session_token')
   if (!token) {
