@@ -36,7 +36,9 @@
       <!-- 第三步：选节（可选） -->
       <div>
         <label class="block text-xs font-medium text-gray-500 mb-1.5">③ 节范围（可选）</label>
-        <div class="flex items-center gap-2">
+
+        <!-- 单章 → 一组节输入 -->
+        <div v-if="isSingleChapter" class="flex items-center gap-2">
           <span class="text-sm text-gray-400">从第</span>
           <input
             v-model.number="form.verse_start"
@@ -55,8 +57,40 @@
             placeholder="节"
             class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
           />
-          <span class="text-xs text-gray-300">（不填则选整章）</span>
+          <span class="text-xs text-gray-300">（不填=整章）</span>
         </div>
+
+        <!-- 多章 → 两组节输入 -->
+        <div v-else-if="isMultiChapter" class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">第{{ form.chapter_start }}章</span>
+            <span class="text-sm text-gray-400">从第</span>
+            <input
+              v-model.number="form.verse_start"
+              type="number"
+              min="1"
+              max="176"
+              placeholder="节"
+              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">第{{ form.chapter_end }}章</span>
+            <span class="text-sm text-gray-400">到第</span>
+            <input
+              v-model.number="form.verse_end"
+              type="number"
+              min="1"
+              max="176"
+              placeholder="节"
+              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            />
+          </div>
+          <p class="text-xs text-gray-400">留空=该章整章</p>
+        </div>
+
+        <!-- 未选章节 -->
+        <p v-else class="text-xs text-gray-300">请先选择章节</p>
       </div>
 
       <!-- 第四步：笔记 -->
@@ -135,18 +169,30 @@ const maxChapters = computed(() => {
   return BOOK_CHAPTERS[form.book] || 0
 })
 
+// 判断单章/多章
+const isSingleChapter = computed(() => {
+  return form.chapter_start && (!form.chapter_end || form.chapter_end === form.chapter_start)
+})
+
+const isMultiChapter = computed(() => {
+  return form.chapter_start && form.chapter_end && form.chapter_end > form.chapter_start
+})
+
 // 预览文本
 const previewText = computed(() => {
   let text = form.book
   if (form.chapter_start) {
     text += ' 第' + form.chapter_start + '章'
-    if (form.chapter_end && form.chapter_end !== form.chapter_start) {
+    if (isMultiChapter.value) {
       text += '至' + form.chapter_end + '章'
-    }
-    if (form.verse_start) {
-      text += ' ' + form.verse_start + '节'
-      if (form.verse_end && form.verse_end !== form.verse_start) {
-        text += '至' + form.verse_end + '节'
+      if (form.verse_start) text += ' ' + form.chapter_start + '章' + form.verse_start + '节'
+      if (form.verse_end) text += '至' + form.chapter_end + '章' + form.verse_end + '节'
+    } else {
+      if (form.verse_start) {
+        text += ' ' + form.verse_start + '节'
+        if (form.verse_end && form.verse_end !== form.verse_start) {
+          text += '至' + form.verse_end + '节'
+        }
       }
     }
   }
