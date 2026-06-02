@@ -1,12 +1,13 @@
 <template>
   <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
     <button
-      @click="expanded = !expanded"
-      class="w-full px-4 py-3 flex items-center justify-between text-sm font-medium text-gray-600 hover:text-emerald-600 transition-colors"
+      @click="toggleExpand"
+      class="w-full px-4 py-3 flex items-center justify-between text-sm font-medium transition-colors"
+      :class="isEditing ? 'text-blue-600' : 'text-gray-600 hover:text-emerald-600'"
     >
       <span class="flex items-center gap-2">
-        <span class="text-emerald-500 text-lg">+</span>
-        添加打卡记录
+        <span class="text-lg" :class="isEditing ? '' : 'text-emerald-500'">{{ isEditing ? '✏️' : '+' }}</span>
+        {{ isEditing ? '编辑打卡记录' : '添加打卡记录' }}
       </span>
       <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': expanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -37,71 +38,40 @@
       <div>
         <label class="block text-xs font-medium text-gray-500 mb-1.5">③ 节范围（可选）</label>
 
-        <!-- 单章 → 一组节输入 -->
         <div v-if="isSingleChapter" class="flex items-center gap-2">
           <span class="text-sm text-gray-400">从第</span>
-          <input
-            v-model.number="form.verse_start"
-            type="number"
-            min="1"
-            max="176"
-            placeholder="节"
-            class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          />
+          <input v-model.number="form.verse_start" type="number" min="1" max="176" placeholder="节"
+            class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" />
           <span class="text-sm text-gray-400">到第</span>
-          <input
-            v-model.number="form.verse_end"
-            type="number"
-            min="1"
-            max="176"
-            placeholder="节"
-            class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          />
+          <input v-model.number="form.verse_end" type="number" min="1" max="176" placeholder="节"
+            class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" />
           <span class="text-xs text-gray-300">（不填=整章）</span>
         </div>
 
-        <!-- 多章 → 两组节输入 -->
         <div v-else-if="isMultiChapter" class="space-y-2">
           <div class="flex items-center gap-2">
             <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">第{{ form.chapter_start }}章</span>
             <span class="text-sm text-gray-400">从第</span>
-            <input
-              v-model.number="form.verse_start"
-              type="number"
-              min="1"
-              max="176"
-              placeholder="节"
-              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
+            <input v-model.number="form.verse_start" type="number" min="1" max="176" placeholder="节"
+              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" />
           </div>
           <div class="flex items-center gap-2">
             <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">第{{ form.chapter_end }}章</span>
             <span class="text-sm text-gray-400">到第</span>
-            <input
-              v-model.number="form.verse_end"
-              type="number"
-              min="1"
-              max="176"
-              placeholder="节"
-              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
+            <input v-model.number="form.verse_end" type="number" min="1" max="176" placeholder="节"
+              class="w-20 px-2.5 py-2 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" />
           </div>
           <p class="text-xs text-gray-400">留空=该章整章</p>
         </div>
 
-        <!-- 未选章节 -->
         <p v-else class="text-xs text-gray-300">请先选择章节</p>
       </div>
 
       <!-- 第四步：笔记 -->
       <div>
         <label class="block text-xs font-medium text-gray-500 mb-1.5">④ 默想笔记（可选）</label>
-        <textarea
-          v-model="form.note"
-          rows="2"
-          placeholder="今天的感动和思考..."
-          class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
-        ></textarea>
+        <textarea v-model="form.note" rows="2" placeholder="今天的感动和思考..."
+          class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"></textarea>
       </div>
 
       <!-- 预览 -->
@@ -109,17 +79,17 @@
         📖 <strong>{{ previewText }}</strong>
       </div>
 
-      <!-- 错误与操作 -->
       <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
 
       <div class="flex justify-end gap-2">
-        <button @click="reset" type="button" class="px-4 py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">取消</button>
-        <button
-          @click="submit"
-          :disabled="submitting"
-          class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white text-sm font-medium rounded-lg transition-colors"
+        <button @click="reset" type="button" class="px-4 py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+          {{ isEditing ? '取消编辑' : '取消' }}
+        </button>
+        <button @click="submit" :disabled="submitting"
+          class="px-5 py-2 text-white text-sm font-medium rounded-lg transition-colors"
+          :class="isEditing ? 'bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300' : 'bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300'"
         >
-          {{ submitting ? '保存中...' : '✅ 保存打卡' }}
+          {{ submitting ? '保存中...' : isEditing ? '💾 保存修改' : '✅ 保存打卡' }}
         </button>
       </div>
     </div>
@@ -129,10 +99,12 @@
 <script setup lang="ts">
 const props = defineProps<{
   date?: string
+  editItem?: any | null
 }>()
 
 const emit = defineEmits<{
   saved: []
+  cancelEdit: []
 }>()
 
 const expanded = ref(false)
@@ -148,7 +120,6 @@ const form = reactive({
   note: ''
 })
 
-// 各书卷章数映射（客户端侧直接用，避免 import 问题）
 const BOOK_CHAPTERS: Record<string, number> = {
   '创世记':50,'出埃及记':40,'利未记':27,'民数记':36,'申命记':34,'约书亚记':24,'士师记':21,'路得记':4,
   '撒母耳记上':31,'撒母耳记下':24,'列王纪上':22,'列王纪下':25,'历代志上':29,'历代志下':36,'以斯拉记':10,
@@ -163,13 +134,27 @@ const BOOK_CHAPTERS: Record<string, number> = {
   '犹大书':1,'启示录':22
 }
 
-// 根据选中的书卷计算最大章数
+const isEditing = computed(() => !!props.editItem)
+
+// 监听 editItem 变化，预填表单
+watch(() => props.editItem, (item) => {
+  if (item) {
+    expanded.value = true
+    form.book = item.book || ''
+    form.chapter_start = item.chapter_start || undefined
+    form.chapter_end = item.chapter_end || undefined
+    form.verse_start = item.verse_start || undefined
+    form.verse_end = item.verse_end || undefined
+    form.note = item.note || ''
+    error.value = ''
+  }
+}, { immediate: true })
+
 const maxChapters = computed(() => {
   if (!form.book) return 0
   return BOOK_CHAPTERS[form.book] || 0
 })
 
-// 判断单章/多章
 const isSingleChapter = computed(() => {
   return form.chapter_start && (!form.chapter_end || form.chapter_end === form.chapter_start)
 })
@@ -178,7 +163,6 @@ const isMultiChapter = computed(() => {
   return form.chapter_start && form.chapter_end && form.chapter_end > form.chapter_start
 })
 
-// 预览文本
 const previewText = computed(() => {
   let text = form.book
   if (form.chapter_start) {
@@ -199,6 +183,11 @@ const previewText = computed(() => {
   return text
 })
 
+function toggleExpand() {
+  if (isEditing.value) return // 编辑模式不能手动折叠
+  expanded.value = !expanded.value
+}
+
 function reset() {
   form.book = ''
   form.chapter_start = undefined
@@ -208,33 +197,35 @@ function reset() {
   form.note = ''
   expanded.value = false
   error.value = ''
+
+  if (isEditing.value) {
+    emit('cancelEdit')
+  }
 }
 
 async function submit() {
-  if (!form.book) {
-    error.value = '请选择书卷'
-    return
-  }
-  if (!form.chapter_start) {
-    error.value = '请点击选择章节'
-    return
-  }
+  if (!form.book) { error.value = '请选择书卷'; return }
+  if (!form.chapter_start) { error.value = '请点击选择章节'; return }
+
   submitting.value = true
   error.value = ''
 
+  const body = {
+    date: props.date || new Date().toISOString().split('T')[0],
+    book: form.book,
+    chapter_start: form.chapter_start,
+    chapter_end: form.chapter_end === form.chapter_start ? null : (form.chapter_end || null),
+    verse_start: form.verse_start || null,
+    verse_end: form.verse_end || null,
+    note: form.note
+  }
+
   try {
-    await $fetch('/api/checkins', {
-      method: 'POST',
-      body: {
-        date: props.date || new Date().toISOString().split('T')[0],
-        book: form.book,
-        chapter_start: form.chapter_start,
-        chapter_end: form.chapter_end === form.chapter_start ? null : (form.chapter_end || null),
-        verse_start: form.verse_start || null,
-        verse_end: form.verse_end || null,
-        note: form.note
-      }
-    })
+    if (isEditing.value) {
+      await $fetch(`/api/checkins/${props.editItem.id}`, { method: 'PUT', body })
+    } else {
+      await $fetch('/api/checkins', { method: 'POST', body })
+    }
     reset()
     emit('saved')
   } catch (e: any) {

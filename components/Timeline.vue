@@ -14,6 +14,7 @@
           :key="item.id"
           :item="item"
           @delete="$emit('delete', $event)"
+          @edit="$emit('edit', $event)"
           @share="$emit('share', $event)"
         />
       </div>
@@ -32,6 +33,7 @@ const props = defineProps<{
 
 defineEmits<{
   delete: [id: number]
+  edit: [item: any]
   share: [item: any]
 }>()
 

@@ -8,6 +8,9 @@
         <p v-if="item.note" class="text-xs text-gray-400 mt-1 line-clamp-2">{{ item.note }}</p>
       </div>
       <div class="flex gap-1.5 flex-shrink-0">
+        <button @click="$emit('edit', item)" title="编辑" class="p-1.5 text-gray-300 hover:text-blue-500 transition-colors text-sm">
+          ✏️
+        </button>
         <button @click="$emit('share', item)" title="生成卡片" class="p-1.5 text-gray-300 hover:text-emerald-500 transition-colors text-sm">
           ✂️
         </button>
@@ -26,6 +29,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   delete: [id: number]
+  edit: [item: any]
   share: [item: any]
 }>()
 

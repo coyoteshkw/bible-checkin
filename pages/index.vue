@@ -50,12 +50,13 @@
         </div>
 
         <!-- 打卡表单 -->
-        <CheckInForm :date="currentDate" @saved="onCheckInSaved" />
+        <CheckInForm :date="currentDate" :edit-item="editingItem" @saved="onCheckInSaved" @cancel-edit="editingItem = null" />
 
         <!-- 时间线 -->
         <Timeline
           :check-ins="checkIns"
           @delete="handleDelete"
+          @edit="handleEdit"
           @share="handleShare"
         />
       </div>
@@ -93,6 +94,7 @@ const calendarKey = ref(0)
 const stats = ref<any>({ streak: 0, thisMonth: 0 })
 const progressPercent = ref(0)
 const shareItem = ref<any>(null)
+const editingItem = ref<any>(null)
 
 // 格式化标题日期
 const formatTitleDate = computed(() => {
@@ -155,6 +157,11 @@ async function handleDelete(id: number) {
     fetchStats()
     fetchProgress()
   } catch {}
+}
+
+// 编辑
+function handleEdit(item: any) {
+  editingItem.value = item
 }
 
 // 分享
