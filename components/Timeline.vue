@@ -4,7 +4,7 @@
       <!-- 日期组 -->
       <div class="flex gap-3">
         <!-- 左侧：圆点 + 连线 -->
-        <div class="flex flex-col items-center w-6 flex-shrink-0">
+        <div class="flex flex-col items-center w-6 flex-shrink-0 pt-0.5">
           <div
             class="rounded-full ring-2 z-10"
             :class="group.isToday
