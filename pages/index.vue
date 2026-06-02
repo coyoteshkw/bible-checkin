@@ -44,12 +44,12 @@
       <!-- ====== 右侧主内容 ====== -->
       <div class="md:col-span-8 space-y-4 mt-5 md:mt-0">
         <!-- 日期标题 -->
-        <div class="flex items-baseline gap-2">
+        <div class="flex items-center gap-2">
           <h2 class="text-lg font-bold text-gray-800 flex items-center gap-1.5">
             <CalendarIcon class="w-5 h-5 text-emerald-500" />
             {{ formatTitleDate }}
           </h2>
-          <span class="text-xs text-gray-400">{{ checkIns.length }} 条记录</span>
+          <span class="text-xs text-gray-400 leading-relaxed">{{ checkIns.length }} 条记录</span>
         </div>
 
         <!-- 打卡表单 -->
@@ -57,10 +57,13 @@
 
         <!-- 时间线 -->
         <Timeline
-          :check-ins="checkIns"
+          :check-ins="timelineCheckIns"
+          :has-more="hasMore"
+          :loading="loadingMore"
           @delete-request="handleDeleteRequest"
           @edit="handleEdit"
           @share="handleShare"
+          @load-more="loadMore"
         />
       </div>
     </div>
@@ -111,6 +114,11 @@ const shareItem = ref<any>(null)
 const editingItem = ref<any>(null)
 const deleteTarget = ref<any>(null)
 
+// 时间线数据（独立于日期选择）
+const timelineCheckIns = ref<any[]>([])
+const hasMore = ref(true)
+const loadingMore = ref(false)
+
 // 格式化标题日期
 const formatTitleDate = computed(() => {
   const d = new Date(currentDate.value + 'T00:00:00')
@@ -123,9 +131,10 @@ const formatTitleDate = computed(() => {
   return `${d.getMonth() + 1}月${d.getDate()}日 · ${weekdays[d.getDay()]}`
 })
 
-// 打卡保存后（刷新列表 + 日历）
+// 打卡保存后（同时刷新时间线和日历）
 function onCheckInSaved() {
-  refreshCheckIns()
+  fetchRecentTimeline()
+  fetchDateCheckIns()
   calendarKey.value++
   fetchStats()
   fetchProgress()
@@ -134,18 +143,47 @@ function onCheckInSaved() {
 // 切换日期
 function onSelectDate(date: string) {
   currentDate.value = date
-  refreshCheckIns()
+  fetchDateCheckIns()
 }
 
-// 刷新打卡列表
-async function refreshCheckIns() {
+// 获取选中日期的打卡数
+async function fetchDateCheckIns() {
   try {
     const data = await $fetch(`/api/checkins?date=${currentDate.value}`)
     checkIns.value = data.checkIns || []
   } catch {}
 }
 
+// 加载时间线（最近 7 天）
+async function fetchRecentTimeline() {
+  try {
+    const data = await $fetch('/api/checkins')
+    timelineCheckIns.value = data.checkIns || []
+    hasMore.value = (data.checkIns || []).length > 0
+  } catch {}
+}
 
+// 加载更多历史
+async function loadMore() {
+  if (loadingMore.value || !timelineCheckIns.value.length) return
+  loadingMore.value = true
+  try {
+    // 找最早日期作为 before 参数
+    const oldest = [...timelineCheckIns.value].sort(
+      (a, b) => a.date.localeCompare(b.date)
+    )[0]
+    const data = await $fetch(`/api/checkins?before=${oldest.date}`)
+    const newItems = data.checkIns || []
+    if (newItems.length === 0) {
+      hasMore.value = false
+    } else {
+      timelineCheckIns.value = [...timelineCheckIns.value, ...newItems]
+    }
+  } catch {}
+  finally {
+    loadingMore.value = false
+  }
+}
 
 // 获取统计
 async function fetchStats() {
@@ -175,7 +213,7 @@ async function confirmDelete() {
   deleteTarget.value = null
   try {
     await $fetch(`/api/checkins/${id}`, { method: 'DELETE' })
-    refreshCheckIns()
+    fetchRecentTimeline()
     calendarKey.value++
     fetchStats()
     fetchProgress()
@@ -194,7 +232,7 @@ function handleShare(item: any) {
 
 // 初始化
 onMounted(() => {
-  refreshCheckIns()
+  fetchRecentTimeline()
   fetchStats()
   fetchProgress()
 })

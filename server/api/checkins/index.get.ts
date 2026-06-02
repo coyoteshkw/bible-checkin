@@ -29,12 +29,28 @@ export default defineEventHandler(async (event) => {
     return { dates: rows.map((r: any) => r.date) }
   }
 
-  // 默认返回最近 7 天
+  // 按日期分页查询（时间线用）：?before=2026-05-26&limit=7
+  const before = query.before as string | undefined
+  const limit = parseInt((query.limit as string) || '7', 10)
+
+  if (before) {
+    const rows = db.prepare(`
+      SELECT * FROM check_ins
+      WHERE user_id = ? AND date < ?
+      ORDER BY date DESC, created_at DESC
+      LIMIT ?
+    `).all(user.id, before, limit)
+
+    return { checkIns: rows }
+  }
+
+  // 默认返回最近 N 天（按时间范围，不是按条数）
+  const days = parseInt((query.days as string) || '7', 10)
   const rows = db.prepare(`
     SELECT * FROM check_ins
-    WHERE user_id = ? AND date >= date('now', '-7 days')
+    WHERE user_id = ? AND date >= date('now', ?)
     ORDER BY date DESC, created_at DESC
-  `).all(user.id)
+  `).all(user.id, `-${days} days`)
 
   return { checkIns: rows }
 })
