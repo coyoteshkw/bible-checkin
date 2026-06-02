@@ -6,7 +6,7 @@
       <!-- ====== 左侧面板（桌面端显示） ====== -->
       <div class="md:col-span-4 space-y-5">
         <!-- 日历（移动端可折叠，桌面端常开） -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 transition-colors">
           <Calendar
             :refresh-key="calendarKey"
             :selected-date="currentDate"
@@ -16,20 +16,20 @@
         </div>
 
         <!-- 今日统计 -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 space-y-3 transition-colors">
           <h3 class="text-xs font-medium text-gray-400 uppercase tracking-wider">统计</h3>
           <div class="grid grid-cols-2 gap-3">
-            <div class="bg-emerald-50 rounded-lg p-3 text-center">
-              <div class="text-lg font-bold text-emerald-600">{{ stats.streak || 0 }}</div>
-              <div class="text-xs text-gray-400">连续打卡</div>
+            <div class="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg p-3 text-center">
+              <div class="text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ stats.streak || 0 }}</div>
+              <div class="text-xs text-gray-400 dark:text-gray-500">连续打卡</div>
             </div>
-            <div class="bg-amber-50 rounded-lg p-3 text-center">
-              <div class="text-lg font-bold text-amber-600">{{ stats.thisMonth || 0 }}</div>
-              <div class="text-xs text-gray-400">本月打卡</div>
+            <div class="bg-amber-50 dark:bg-amber-900/30 rounded-lg p-3 text-center">
+              <div class="text-lg font-bold text-amber-600 dark:text-amber-400">{{ stats.thisMonth || 0 }}</div>
+              <div class="text-xs text-gray-400 dark:text-gray-500">本月打卡</div>
             </div>
           </div>
           <div>
-            <div class="flex justify-between text-xs text-gray-400 mb-1">
+            <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1">
               <span>阅读进度</span>
               <span>{{ progressPercent }}%</span>
             </div>
