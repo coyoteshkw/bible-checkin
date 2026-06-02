@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  checkedDates?: string[]
+  refreshKey?: number
   selectedDate?: string
   alwaysOpen?: boolean
 }>()
@@ -81,11 +81,18 @@ function nextMonth() {
   }
 }
 
-// 监听月份变化，获取该月已打卡日期
+// 该月已打卡日期（自己从 API 拉，不与父组件 prop 打架）
 const checkedSet = ref(new Set<string>())
+
+// 月份变化时重新拉取
 watch([year, month], async () => {
   await fetchMonthDates()
 }, { immediate: true })
+
+// 父组件通知刷新（打卡添加后）
+watch(() => props.refreshKey, () => {
+  fetchMonthDates()
+})
 
 async function fetchMonthDates() {
   try {
@@ -96,11 +103,6 @@ async function fetchMonthDates() {
     checkedSet.value = new Set()
   }
 }
-
-// 同时监听外部 checkedDates 变化
-watch(() => props.checkedDates, (dates) => {
-  if (dates) checkedSet.value = new Set(dates)
-}, { immediate: true })
 
 const today = new Date()
 const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`

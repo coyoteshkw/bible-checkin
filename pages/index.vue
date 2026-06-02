@@ -8,7 +8,7 @@
         <!-- 日历（移动端可折叠，桌面端常开） -->
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
           <Calendar
-            :checked-dates="checkedDates"
+            :refresh-key="calendarKey"
             :selected-date="currentDate"
             :always-open="isDesktop"
             @select-date="onSelectDate"
@@ -89,7 +89,7 @@ onMounted(() => {
 // 当前选中的日期
 const currentDate = ref(new Date().toISOString().split('T')[0])
 const checkIns = ref<any[]>([])
-const checkedDates = ref<string[]>([])
+const calendarKey = ref(0)
 const stats = ref<any>({ streak: 0, thisMonth: 0 })
 const progressPercent = ref(0)
 const shareItem = ref<any>(null)
@@ -109,7 +109,7 @@ const formatTitleDate = computed(() => {
 // 打卡保存后（刷新列表 + 日历）
 function onCheckInSaved() {
   refreshCheckIns()
-  fetchCheckedDates()
+  calendarKey.value++
   fetchStats()
   fetchProgress()
 }
@@ -128,15 +128,7 @@ async function refreshCheckIns() {
   } catch {}
 }
 
-// 获取已打卡日期（日历高亮）
-async function fetchCheckedDates() {
-  const now = new Date()
-  const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  try {
-    const data = await $fetch(`/api/checkins?month=${month}`)
-    checkedDates.value = data.dates || []
-  } catch {}
-}
+
 
 // 获取统计
 async function fetchStats() {
@@ -159,8 +151,8 @@ async function handleDelete(id: number) {
   try {
     await $fetch(`/api/checkins/${id}`, { method: 'DELETE' })
     refreshCheckIns()
+    calendarKey.value++
     fetchStats()
-    fetchCheckedDates()
     fetchProgress()
   } catch {}
 }
@@ -173,7 +165,6 @@ function handleShare(item: any) {
 // 初始化
 onMounted(() => {
   refreshCheckIns()
-  fetchCheckedDates()
   fetchStats()
   fetchProgress()
 })
