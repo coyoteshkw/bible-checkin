@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-3xl mx-auto px-4 py-6">
-    <h1 class="text-xl font-bold text-gray-800 mb-6">📊 阅读进度</h1>
+    <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2"><BarChart3 class="w-6 h-6 text-emerald-500" /> 阅读进度</h1>
 
     <!-- 总进度 -->
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import { BarChart3 } from 'lucide-vue-next'
 const progress = ref<any>({ total: { percentage: 0, read: 0, total: 1189 }, testaments: [] })
 const expandedBooks = ref(new Set<number>())
 const allCheckIns = ref<any[]>([])

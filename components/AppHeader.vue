@@ -2,7 +2,7 @@
   <header class="bg-white border-b border-gray-100 sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
       <NuxtLink to="/" class="flex items-center gap-2 font-bold text-gray-800">
-        <span class="text-xl">📖</span>
+        <BookOpen class="w-5 h-5 text-emerald-500" />
         <span class="hidden sm:inline">圣经打卡</span>
       </NuxtLink>
 
@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import { BookOpen } from 'lucide-vue-next'
 const { user, logout } = useAuth()
 
 async function handleLogout() {

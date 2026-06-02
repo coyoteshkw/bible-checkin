@@ -3,7 +3,7 @@
     <!-- 卡片预览 -->
     <div ref="cardEl" class="p-6 bg-gradient-to-br from-emerald-50 to-white">
       <div class="text-center mb-4">
-        <span class="text-3xl">📖</span>
+        <BookOpen class="w-10 h-10 text-emerald-500 mx-auto" />
         <h3 class="text-lg font-bold text-gray-800 mt-1">今日读经</h3>
       </div>
 
@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import { BookOpen } from 'lucide-vue-next'
 import { toPng } from 'html-to-image'
 
 const props = defineProps<{

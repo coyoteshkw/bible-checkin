@@ -9,13 +9,13 @@
       </div>
       <div class="flex gap-1.5 flex-shrink-0">
         <button @click="$emit('edit', item)" title="编辑" class="p-1.5 text-gray-300 hover:text-blue-500 transition-colors text-sm">
-          ✏️
+          <Pencil class="w-3.5 h-3.5" />
         </button>
         <button @click="$emit('share', item)" title="生成卡片" class="p-1.5 text-gray-300 hover:text-emerald-500 transition-colors text-sm">
-          ✂️
+          <Image class="w-3.5 h-3.5" />
         </button>
         <button @click="handleDelete" title="删除" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors text-sm">
-          🗑️
+          <Trash2 class="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import { Pencil, Image, Trash2 } from 'lucide-vue-next'
 const props = defineProps<{
   item: any
 }>()

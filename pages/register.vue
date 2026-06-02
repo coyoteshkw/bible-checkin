@@ -2,7 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
     <div class="w-full max-w-sm">
       <div class="text-center mb-8">
-        <div class="text-4xl mb-2">📖</div>
+        <BookOpen class="w-12 h-12 text-emerald-500 mx-auto mb-2" />
         <h1 class="text-2xl font-bold text-gray-800">圣经打卡</h1>
         <p class="text-gray-400 text-sm mt-1">创建新账号</p>
       </div>
@@ -60,6 +60,7 @@
 </template>
 
 <script setup lang="ts">
+import { BookOpen } from 'lucide-vue-next'
 definePageMeta({ layout: false })
 
 const { register } = useAuth()

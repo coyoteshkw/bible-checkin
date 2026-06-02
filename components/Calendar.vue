@@ -1,7 +1,7 @@
 <template>
   <details class="group" :open="alwaysOpen">
     <summary class="text-sm font-medium text-gray-500 cursor-pointer select-none list-none flex items-center gap-2 py-1">
-      <span class="text-emerald-500">📅</span>
+      <Calendar class="w-4 h-4 text-emerald-500" />
       <span>{{ expanded ? '收起日历' : '展开日历' }}</span>
       <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import { Calendar } from 'lucide-vue-next'
 const props = defineProps<{
   refreshKey?: number
   selectedDate?: string

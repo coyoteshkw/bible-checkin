@@ -21,12 +21,13 @@
     </div>
 
     <p v-if="!grouped.length" class="text-center text-gray-300 py-8 text-sm">
-      还没有打卡记录 📝 开始你的第一天吧！
+      还没有打卡记录 <FileText class="w-4 h-4 inline-block" /> 开始你的第一天吧！
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
+import { FileText } from 'lucide-vue-next'
 const props = defineProps<{
   checkIns: any[]
 }>()

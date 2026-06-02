@@ -6,7 +6,8 @@
       :class="isEditing ? 'text-blue-600' : 'text-gray-600 hover:text-emerald-600'"
     >
       <span class="flex items-center gap-2">
-        <span class="text-lg" :class="isEditing ? '' : 'text-emerald-500'">{{ isEditing ? '✏️' : '+' }}</span>
+        <Pencil v-if="isEditing" class="w-5 h-5" />
+        <Plus v-else class="w-5 h-5 text-emerald-500" />
         {{ isEditing ? '编辑打卡记录' : '添加打卡记录' }}
       </span>
       <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': expanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +77,7 @@
 
       <!-- 预览 -->
       <div v-if="form.book && form.chapter_start" class="bg-emerald-50 rounded-lg p-3 text-sm text-emerald-800">
-        📖 <strong>{{ previewText }}</strong>
+        <BookOpen class="w-4 h-4 inline-block" /> <strong>{{ previewText }}</strong>
       </div>
 
       <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
@@ -89,7 +90,7 @@
           class="px-5 py-2 text-white text-sm font-medium rounded-lg transition-colors"
           :class="isEditing ? 'bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300' : 'bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300'"
         >
-          {{ submitting ? '保存中...' : isEditing ? '💾 保存修改' : '✅ 保存打卡' }}
+          {{ submitting ? '保存中...' : isEditing ? '保存修改' : '保存打卡' }}
         </button>
       </div>
     </div>
@@ -97,6 +98,7 @@
 </template>
 
 <script setup lang="ts">
+import { BookOpen, Pencil, Plus } from 'lucide-vue-next'
 const props = defineProps<{
   date?: string
   editItem?: any | null
