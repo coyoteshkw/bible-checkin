@@ -42,26 +42,36 @@
 const props = defineProps<{
   book?: string
   totalChapters: number
+  chapterStart?: number
+  chapterEnd?: number
 }>()
 
-const start = defineModel<number | undefined>('chapterStart')
-const end = defineModel<number | undefined>('chapterEnd')
+const emit = defineEmits<{
+  'update:chapterStart': [value: number | undefined]
+  'update:chapterEnd': [value: number | undefined]
+}>()
+
+// 本地状态
+const start = computed({
+  get: () => props.chapterStart,
+  set: (val) => emit('update:chapterStart', val)
+})
+const end = computed({
+  get: () => props.chapterEnd,
+  set: (val) => emit('update:chapterEnd', val)
+})
 
 function toggleChapter(ch: number) {
   if (start.value === undefined) {
-    // 第一次点击：选中该章
     start.value = ch
     end.value = undefined
   } else if (end.value !== undefined) {
-    // 已有范围：重置为该章
     start.value = ch
     end.value = undefined
   } else if (ch === start.value) {
-    // 点击同一个：取消选中
     start.value = undefined
     end.value = undefined
   } else {
-    // 第二次点击不同章：确定范围
     const s = start.value
     const e = ch
     start.value = Math.min(s, e)
@@ -76,7 +86,6 @@ function chapterClass(ch: number): Record<string, boolean> {
   )
   return {
     'bg-emerald-500 text-white font-medium shadow-sm': isInRange,
-    'bg-emerald-100 text-emerald-700': isInRange,
     'bg-gray-50 text-gray-600 hover:bg-gray-100': !isInRange
   }
 }

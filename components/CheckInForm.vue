@@ -72,7 +72,7 @@
 
       <!-- 预览 -->
       <div v-if="form.book && form.chapter_start" class="bg-emerald-50 rounded-lg p-3 text-sm text-emerald-800">
-        📖 <strong>{{ previewRef }}</strong>
+        📖 <strong>{{ previewText }}</strong>
       </div>
 
       <!-- 错误与操作 -->
@@ -93,8 +93,6 @@
 </template>
 
 <script setup lang="ts">
-import { getAllBooks } from '~/utils/bible-data'
-
 const props = defineProps<{
   date?: string
 }>()
@@ -116,29 +114,43 @@ const form = reactive({
   note: ''
 })
 
+// 各书卷章数映射（客户端侧直接用，避免 import 问题）
+const BOOK_CHAPTERS: Record<string, number> = {
+  '创世记':50,'出埃及记':40,'利未记':27,'民数记':36,'申命记':34,'约书亚记':24,'士师记':21,'路得记':4,
+  '撒母耳记上':31,'撒母耳记下':24,'列王纪上':22,'列王纪下':25,'历代志上':29,'历代志下':36,'以斯拉记':10,
+  '尼希米记':13,'以斯帖记':10,'约伯记':42,'诗篇':150,'箴言':31,'传道书':12,'雅歌':8,
+  '以赛亚书':66,'耶利米书':52,'耶利米哀歌':5,'以西结书':48,'但以理书':12,'何西阿书':14,'约珥书':3,
+  '阿摩司书':9,'俄巴底亚书':1,'约拿书':4,'弥迦书':7,'那鸿书':3,'哈巴谷书':3,'西番雅书':3,
+  '哈该书':2,'撒迦利亚书':14,'玛拉基书':4,
+  '马太福音':28,'马可福音':16,'路加福音':24,'约翰福音':21,'使徒行传':28,'罗马书':16,
+  '哥林多前书':16,'哥林多后书':13,'加拉太书':6,'以弗所书':6,'腓立比书':4,'歌罗西书':4,
+  '帖撒罗尼迦前书':5,'帖撒罗尼迦后书':3,'提摩太前书':6,'提摩太后书':4,'提多书':3,'腓利门书':1,
+  '希伯来书':13,'雅各书':5,'彼得前书':5,'彼得后书':3,'约翰一书':5,'约翰二书':1,'约翰三书':1,
+  '犹大书':1,'启示录':22
+}
+
 // 根据选中的书卷计算最大章数
 const maxChapters = computed(() => {
   if (!form.book) return 0
-  const book = getAllBooks().find(b => b.name === form.book)
-  return book?.chapters || 0
+  return BOOK_CHAPTERS[form.book] || 0
 })
 
 // 预览文本
-const previewRef = computed(() => {
-  let ref = form.book
+const previewText = computed(() => {
+  let text = form.book
   if (form.chapter_start) {
-    ref += ' 第' + form.chapter_start + '章'
+    text += ' 第' + form.chapter_start + '章'
     if (form.chapter_end && form.chapter_end !== form.chapter_start) {
-      ref += '至' + form.chapter_end + '章'
+      text += '至' + form.chapter_end + '章'
     }
     if (form.verse_start) {
-      ref += ' ' + form.verse_start + '节'
+      text += ' ' + form.verse_start + '节'
       if (form.verse_end && form.verse_end !== form.verse_start) {
-        ref += '至' + form.verse_end + '节'
+        text += '至' + form.verse_end + '节'
       }
     }
   }
-  return ref
+  return text
 })
 
 function reset() {
