@@ -76,7 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import { Calendar } from 'lucide-vue-next'
 const { user } = useAuth()
 
 // 响应式检测桌面端
