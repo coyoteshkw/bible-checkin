@@ -27,11 +27,12 @@
           <button
             v-else
             @click="$emit('selectDate', day.dateStr)"
-            class="text-center py-1.5 text-sm rounded-lg transition-colors"
+            :title="day.dateStr"
+            class="text-center py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
             :class="{
-              'bg-emerald-500 text-white font-medium': day.dateStr === selectedDate,
-              'bg-emerald-100 text-emerald-700': day.checked && day.dateStr !== selectedDate,
-              'text-gray-600 hover:bg-gray-100': !day.checked && day.dateStr !== selectedDate,
+              'bg-emerald-500 text-white font-medium hover:bg-emerald-600': day.dateStr === activeDate,
+              'bg-emerald-100 text-emerald-700 hover:bg-emerald-200': day.checked && day.dateStr !== activeDate,
+              'text-gray-600 hover:bg-gray-100': !day.checked && day.dateStr !== activeDate,
               'text-gray-300': day.isFuture
             }"
             :disabled="day.isFuture"
@@ -132,4 +133,7 @@ const days = computed(() => {
 
 // 默认选中今天
 const selectedDate = ref(todayStr)
+
+// 优先使用父组件传入的 selectedDate，否则用本地值
+const activeDate = computed(() => props.selectedDate || selectedDate.value)
 </script>

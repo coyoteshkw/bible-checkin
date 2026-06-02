@@ -50,7 +50,7 @@
         </div>
 
         <!-- 打卡表单 -->
-        <CheckInForm :date="currentDate" @saved="refreshCheckIns" />
+        <CheckInForm :date="currentDate" @saved="onCheckInSaved" />
 
         <!-- 时间线 -->
         <Timeline
@@ -105,6 +105,14 @@ const formatTitleDate = computed(() => {
   if (currentDate.value === yesterday.toISOString().split('T')[0]) return '📅 昨天'
   return `📅 ${d.getMonth() + 1}月${d.getDate()}日 · ${weekdays[d.getDay()]}`
 })
+
+// 打卡保存后（刷新列表 + 日历）
+function onCheckInSaved() {
+  refreshCheckIns()
+  fetchCheckedDates()
+  fetchStats()
+  fetchProgress()
+}
 
 // 切换日期
 function onSelectDate(date: string) {

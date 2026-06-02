@@ -30,16 +30,31 @@ const emit = defineEmits<{
 }>()
 
 function formatRef(item: any): string {
-  let ref = item.book + ' ' + item.chapter_start
-  if (item.chapter_end) {
-    ref += '-' + item.chapter_end
+  const hasChapterRange = item.chapter_end && item.chapter_end !== item.chapter_start
+  const hasVerseStart = item.verse_start != null
+  const hasVerseEnd = item.verse_end != null
+  const hasVerseRange = hasVerseStart && hasVerseEnd && item.verse_end !== item.verse_start
+
+  let ref = item.book + ' '
+
+  if (hasChapterRange && hasVerseStart) {
+    // 多章 + 有节 → 出埃及记 7:5-8:25
+    ref += item.chapter_start + ':' + item.verse_start
+    ref += '-' + item.chapter_end + ':' + (hasVerseEnd ? item.verse_end : '')
+  } else if (hasChapterRange) {
+    // 多章 + 无节 → 出埃及记 7-8
+    ref += item.chapter_start + '-' + item.chapter_end
+  } else if (hasVerseRange) {
+    // 单章 + 节范围 → 出埃及记 7:5-25
+    ref += item.chapter_start + ':' + item.verse_start + '-' + item.verse_end
+  } else if (hasVerseStart) {
+    // 单章 + 单节 → 出埃及记 7:5
+    ref += item.chapter_start + ':' + item.verse_start
+  } else {
+    // 单章 + 无节 → 出埃及记 7
+    ref += item.chapter_start
   }
-  if (item.verse_start) {
-    ref += ':' + item.verse_start
-    if (item.verse_end) {
-      ref += '-' + item.verse_end
-    }
-  }
+
   return ref
 }
 
