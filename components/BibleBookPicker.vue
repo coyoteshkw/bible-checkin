@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div ref="pickerRef" class="relative">
     <button
       @click="open = !open"
       type="button"
@@ -58,6 +58,7 @@ const bibleData = [
 
 const selected = defineModel<string>('book')
 const open = ref(false)
+const pickerRef = ref<HTMLDivElement>()
 
 function selectBook(name: string) {
   selected.value = name
@@ -67,8 +68,7 @@ function selectBook(name: string) {
 // 点击外部关闭
 onMounted(() => {
   document.addEventListener('click', (e) => {
-    const el = document.querySelector('.relative')
-    if (el && !el.contains(e.target as Node)) {
+    if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) {
       open.value = false
     }
   })
