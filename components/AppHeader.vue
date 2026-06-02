@@ -19,16 +19,16 @@
         <span class="text-gray-300">|</span>
 
         <!-- 用户下拉菜单 -->
-        <div class="relative" @mouseenter="menuOpen = true" @mouseleave="menuOpen = false">
+        <div class="relative" @mouseenter="onMenuEnter" @mouseleave="onMenuLeave">
           <button @click="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
             {{ user?.username }}
             <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': menuOpen }" />
           </button>
 
           <!-- 下拉框 -->
-          <div v-if="menuOpen"
-            class="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50"
-            @mouseenter="menuOpen = true" @mouseleave="menuOpen = false">
+          <div v-show="menuOpen"
+            class="absolute right-0 top-full mt-0.5 w-44 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50"
+            @mouseenter="onMenuEnter" @mouseleave="onMenuLeave">
             <button @click="showClearConfirm = true; menuOpen = false"
               class="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
               <Trash2 class="w-4 h-4" />
@@ -61,6 +61,18 @@ const { user, logout } = useAuth()
 
 const menuOpen = ref(false)
 const showClearConfirm = ref(false)
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+function onMenuEnter() {
+  if (hideTimer) clearTimeout(hideTimer)
+  menuOpen.value = true
+}
+
+function onMenuLeave() {
+  hideTimer = setTimeout(() => {
+    menuOpen.value = false
+  }, 150)
+}
 
 async function handleLogout() {
   await logout()
