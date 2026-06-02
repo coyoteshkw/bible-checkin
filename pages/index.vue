@@ -45,8 +45,10 @@
       <div class="md:col-span-8 space-y-4 mt-5 md:mt-0">
         <!-- 日期标题 -->
         <div class="flex items-baseline gap-2">
-          <CalendarIcon class="w-5 h-5 text-emerald-500" />
-          <h2 class="text-lg font-bold text-gray-800">{{ formatTitleDate }}</h2>
+          <h2 class="text-lg font-bold text-gray-800 flex items-center gap-1.5">
+            <CalendarIcon class="w-5 h-5 text-emerald-500" />
+            {{ formatTitleDate }}
+          </h2>
           <span class="text-xs text-gray-400">{{ checkIns.length }} 条记录</span>
         </div>
 
@@ -56,12 +58,22 @@
         <!-- 时间线 -->
         <Timeline
           :check-ins="checkIns"
-          @delete="handleDelete"
+          @delete-request="handleDeleteRequest"
           @edit="handleEdit"
           @share="handleShare"
         />
       </div>
     </div>
+
+    <!-- 删除确认弹窗 -->
+    <ConfirmDialog
+      :show="!!deleteTarget"
+      title="删除打卡记录"
+      message="确定要删除这条打卡记录吗？删除后无法恢复。"
+      confirm-text="确认删除"
+      @confirm="confirmDelete"
+      @cancel="deleteTarget = null"
+    />
 
     <!-- 分享卡片弹窗 -->
     <Teleport to="body">
@@ -97,6 +109,7 @@ const stats = ref<any>({ streak: 0, thisMonth: 0 })
 const progressPercent = ref(0)
 const shareItem = ref<any>(null)
 const editingItem = ref<any>(null)
+const deleteTarget = ref<any>(null)
 
 // 格式化标题日期
 const formatTitleDate = computed(() => {
@@ -150,8 +163,16 @@ async function fetchProgress() {
   } catch {}
 }
 
-// 删除
-async function handleDelete(id: number) {
+// 删除请求（弹出确认框）
+function handleDeleteRequest(item: any) {
+  deleteTarget.value = item
+}
+
+// 确认删除
+async function confirmDelete() {
+  if (!deleteTarget.value) return
+  const id = deleteTarget.value.id
+  deleteTarget.value = null
   try {
     await $fetch(`/api/checkins/${id}`, { method: 'DELETE' })
     refreshCheckIns()

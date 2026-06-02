@@ -14,7 +14,7 @@
         <button @click="$emit('share', item)" title="生成卡片" class="p-1.5 text-gray-300 hover:text-emerald-500 transition-colors text-sm">
           <Image class="w-3.5 h-3.5" />
         </button>
-        <button @click="handleDelete" title="删除" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors text-sm">
+        <button @click="$emit('deleteRequest', item)" title="删除" class="p-1.5 text-gray-300 hover:text-red-500 transition-colors text-sm">
           <Trash2 class="w-3.5 h-3.5" />
         </button>
       </div>
@@ -29,7 +29,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  delete: [id: number]
+  deleteRequest: [item: any]
   edit: [item: any]
   share: [item: any]
 }>()
@@ -63,8 +63,4 @@ function formatRef(item: any): string {
   return ref
 }
 
-async function handleDelete() {
-  if (!confirm('确定删除这条打卡记录？')) return
-  emit('delete', props.item.id)
-}
 </script>

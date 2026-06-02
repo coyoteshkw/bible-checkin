@@ -13,7 +13,7 @@
           v-for="item in group.items"
           :key="item.id"
           :item="item"
-          @delete="$emit('delete', $event)"
+          @delete-request="$emit('deleteRequest', $event)"
           @edit="$emit('edit', $event)"
           @share="$emit('share', $event)"
         />
@@ -33,7 +33,7 @@ const props = defineProps<{
 }>()
 
 defineEmits<{
-  delete: [id: number]
+  deleteRequest: [item: any]
   edit: [item: any]
   share: [item: any]
 }>()
