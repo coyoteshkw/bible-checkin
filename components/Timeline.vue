@@ -21,7 +21,8 @@
         <!-- 右侧：标题 + 卡片 -->
         <div class="flex-1 pb-6 min-w-0">
           <div class="flex items-baseline gap-2 mb-2">
-            <h3 class="text-sm font-bold" :class="group.isToday ? 'text-emerald-600' : 'text-gray-500'">
+            <h3 :id="'timeline-date-' + group.date" class="text-sm font-bold scroll-mt-20"
+              :class="group.isToday ? 'text-emerald-600' : 'text-gray-500'">
               {{ formatDateLabel(group.date) }}
             </h3>
             <span class="text-xs text-gray-300">{{ group.items.length }} 条</span>

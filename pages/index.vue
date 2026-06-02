@@ -68,6 +68,18 @@
       </div>
     </div>
 
+    <!-- 返回顶部按钮 -->
+    <Teleport to="body">
+      <button
+        v-if="showBackToTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-40 w-10 h-10 bg-white border border-gray-200 shadow-lg rounded-full flex items-center justify-center hover:shadow-xl hover:border-emerald-300 transition-all duration-200"
+        title="返回顶部"
+      >
+        <ArrowUp class="w-5 h-5 text-emerald-500" />
+      </button>
+    </Teleport>
+
     <!-- 删除确认弹窗 -->
     <ConfirmDialog
       :show="!!deleteTarget"
@@ -92,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { CalendarIcon } from 'lucide-vue-next'
+import { CalendarIcon, ArrowUp } from 'lucide-vue-next'
 const { user } = useAuth()
 
 // 响应式检测桌面端
@@ -113,6 +125,7 @@ const progressPercent = ref(0)
 const shareItem = ref<any>(null)
 const editingItem = ref<any>(null)
 const deleteTarget = ref<any>(null)
+const showBackToTop = ref(false)
 
 // 时间线数据（独立于日期选择）
 const timelineCheckIns = ref<any[]>([])
@@ -144,7 +157,29 @@ function onCheckInSaved() {
 function onSelectDate(date: string) {
   currentDate.value = date
   fetchDateCheckIns()
+  // 滚动到时间线中对应日期
+  nextTick(() => {
+    const el = document.getElementById('timeline-date-' + date)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
 }
+
+// 返回顶部
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// 监听滚动显示/隐藏返回顶部按钮
+function onScroll() {
+  showBackToTop.value = window.scrollY > 400
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+})
 
 // 获取选中日期的打卡数
 async function fetchDateCheckIns() {
