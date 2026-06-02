@@ -1,8 +1,172 @@
 <template>
   <div class="max-w-5xl mx-auto px-4 py-6">
-    <p class="text-gray-400 text-center">加载中...</p>
+    <!-- 移动端：上下结构 / 桌面端：左右分栏 -->
+    <div class="md:grid md:grid-cols-12 md:gap-6">
+
+      <!-- ====== 左侧面板（桌面端显示） ====== -->
+      <div class="md:col-span-4 space-y-5">
+        <!-- 日历（移动端可折叠，桌面端常开） -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <Calendar
+            :checked-dates="checkedDates"
+            :selected-date="currentDate"
+            :always-open="isDesktop"
+            @select-date="onSelectDate"
+          />
+        </div>
+
+        <!-- 今日统计 -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
+          <h3 class="text-xs font-medium text-gray-400 uppercase tracking-wider">统计</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-emerald-50 rounded-lg p-3 text-center">
+              <div class="text-lg font-bold text-emerald-600">{{ stats.streak || 0 }}</div>
+              <div class="text-xs text-gray-400">连续打卡</div>
+            </div>
+            <div class="bg-amber-50 rounded-lg p-3 text-center">
+              <div class="text-lg font-bold text-amber-600">{{ stats.thisMonth || 0 }}</div>
+              <div class="text-xs text-gray-400">本月打卡</div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>阅读进度</span>
+              <span>{{ progressPercent }}%</span>
+            </div>
+            <ProgressBar :percentage="progressPercent" :show-label="false" />
+          </div>
+          <NuxtLink to="/progress" class="block text-xs text-emerald-500 hover:text-emerald-600 font-medium text-center pt-1">
+            查看完整进度 →
+          </NuxtLink>
+        </div>
+      </div>
+
+      <!-- ====== 右侧主内容 ====== -->
+      <div class="md:col-span-8 space-y-4 mt-5 md:mt-0">
+        <!-- 日期标题 -->
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-lg font-bold text-gray-800">{{ formatTitleDate }}</h2>
+          <span class="text-xs text-gray-400">{{ checkIns.length }} 条记录</span>
+        </div>
+
+        <!-- 打卡表单 -->
+        <CheckInForm :date="currentDate" @saved="refreshCheckIns" />
+
+        <!-- 时间线 -->
+        <Timeline
+          :check-ins="checkIns"
+          @delete="handleDelete"
+          @share="handleShare"
+        />
+      </div>
+    </div>
+
+    <!-- 分享卡片弹窗 -->
+    <Teleport to="body">
+      <div v-if="shareItem" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="shareItem = null">
+        <ShareCard
+          :item="shareItem"
+          :username="user?.username || ''"
+          @close="shareItem = null"
+        />
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
+const { user } = useAuth()
+
+// 响应式检测桌面端
+const isDesktop = ref(false)
+onMounted(() => {
+  isDesktop.value = window.innerWidth >= 768
+  window.addEventListener('resize', () => {
+    isDesktop.value = window.innerWidth >= 768
+  })
+})
+
+// 当前选中的日期
+const currentDate = ref(new Date().toISOString().split('T')[0])
+const checkIns = ref<any[]>([])
+const checkedDates = ref<string[]>([])
+const stats = ref<any>({ streak: 0, thisMonth: 0 })
+const progressPercent = ref(0)
+const shareItem = ref<any>(null)
+
+// 格式化标题日期
+const formatTitleDate = computed(() => {
+  const d = new Date(currentDate.value + 'T00:00:00')
+  const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+  const today = new Date().toISOString().split('T')[0]
+  if (currentDate.value === today) return '📅 今天'
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (currentDate.value === yesterday.toISOString().split('T')[0]) return '📅 昨天'
+  return `📅 ${d.getMonth() + 1}月${d.getDate()}日 · ${weekdays[d.getDay()]}`
+})
+
+// 切换日期
+function onSelectDate(date: string) {
+  currentDate.value = date
+  refreshCheckIns()
+}
+
+// 刷新打卡列表
+async function refreshCheckIns() {
+  try {
+    const data = await $fetch(`/api/checkins?date=${currentDate.value}`)
+    checkIns.value = data.checkIns || []
+  } catch {}
+}
+
+// 获取已打卡日期（日历高亮）
+async function fetchCheckedDates() {
+  const now = new Date()
+  const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  try {
+    const data = await $fetch(`/api/checkins?month=${month}`)
+    checkedDates.value = data.dates || []
+  } catch {}
+}
+
+// 获取统计
+async function fetchStats() {
+  try {
+    const data = await $fetch('/api/checkins/stats')
+    stats.value = data
+  } catch {}
+}
+
+// 获取总进度百分比
+async function fetchProgress() {
+  try {
+    const data = await $fetch('/api/progress')
+    progressPercent.value = data.total?.percentage || 0
+  } catch {}
+}
+
+// 删除
+async function handleDelete(id: number) {
+  try {
+    await $fetch(`/api/checkins/${id}`, { method: 'DELETE' })
+    refreshCheckIns()
+    fetchStats()
+    fetchCheckedDates()
+    fetchProgress()
+  } catch {}
+}
+
+// 分享
+function handleShare(item: any) {
+  shareItem.value = item
+}
+
+// 初始化
+onMounted(() => {
+  refreshCheckIns()
+  fetchCheckedDates()
+  fetchStats()
+  fetchProgress()
+})
 </script>
