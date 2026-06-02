@@ -57,13 +57,27 @@ const formatDate = computed(() => {
 
 function formatRef(item: any): string {
   if (!item) return ''
-  let ref = item.book + ' ' + item.chapter_start
-  if (item.chapter_end) ref += '-' + item.chapter_end
-  if (item.verse_start) {
-    ref += ':' + item.verse_start
-    if (item.verse_end) ref += '-' + item.verse_end
+  const hasChapterRange = item.chapter_end && item.chapter_end !== item.chapter_start
+  const hasVerseStart = item.verse_start != null
+  const hasVerseEnd = item.verse_end != null
+  const hasVerseRange = hasVerseStart && hasVerseEnd && item.verse_end !== item.verse_start
+
+  let text = item.book + ' '
+
+  if (hasChapterRange && hasVerseStart) {
+    text += item.chapter_start + ':' + item.verse_start
+    text += '-' + item.chapter_end + ':' + (hasVerseEnd ? item.verse_end : '')
+  } else if (hasChapterRange) {
+    text += item.chapter_start + '-' + item.chapter_end
+  } else if (hasVerseRange) {
+    text += item.chapter_start + ':' + item.verse_start + '-' + item.verse_end
+  } else if (hasVerseStart) {
+    text += item.chapter_start + ':' + item.verse_start
+  } else {
+    text += item.chapter_start
   }
-  return ref
+
+  return text
 }
 
 async function downloadCard() {
