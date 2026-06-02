@@ -1,0 +1,21 @@
+{
+  "name": "bible-checkin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "start": "node .output/server/index.mjs"
+  },
+  "dependencies": {
+    "nuxt": "^3.15.0",
+    "@nuxtjs/tailwindcss": "^6.13.0",
+    "better-sqlite3": "^11.7.0",
+    "bcryptjs": "^2.4.3",
+    "html-to-image": "^1.11.11"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/bcryptjs": "^2.4.6"
+  }
+}
