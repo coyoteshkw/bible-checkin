@@ -1,4 +1,3 @@
-import { defineEventHandler, readBody } from 'h3'
 import { getDb } from '../../db/index'
 
 export default defineEventHandler(async (event) => {
@@ -8,8 +7,17 @@ export default defineEventHandler(async (event) => {
 
   const { date, book, chapter_start, chapter_end, verse_start, verse_end, note } = body
 
-  if (!date || !book || !chapter_start) {
-    throw createError({ statusCode: 400, statusMessage: '请填写日期、书卷和起始章' })
+  if (!date) {
+    throw createError({ statusCode: 400, statusMessage: '请选择日期' })
+  }
+
+  // 章节范围验证
+  const errors = validateCheckIn({ book, chapter_start, chapter_end, verse_start, verse_end })
+  if (errors.length > 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: errors[0].message
+    })
   }
 
   const result = db.prepare(`
