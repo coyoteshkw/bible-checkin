@@ -14,7 +14,7 @@
     </button>
 
     <div v-if="expanded" class="px-4 pb-4 space-y-3 border-t border-gray-50 pt-3">
-      <BibleBookPicker v-model="form.book" />
+      <BibleBookPicker v-model:book="form.book" />
 
       <div class="grid grid-cols-3 gap-2">
         <div>
