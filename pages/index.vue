@@ -45,6 +45,7 @@
       <div class="md:col-span-8 space-y-4 mt-5 md:mt-0">
         <!-- 日期标题 -->
         <div class="flex items-baseline gap-2">
+          <CalendarIcon class="w-5 h-5 text-emerald-500" />
           <h2 class="text-lg font-bold text-gray-800">{{ formatTitleDate }}</h2>
           <span class="text-xs text-gray-400">{{ checkIns.length }} 条记录</span>
         </div>
@@ -76,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import { CalendarIcon } from 'lucide-vue-next'
 const { user } = useAuth()
 
 // 响应式检测桌面端
@@ -101,11 +103,11 @@ const formatTitleDate = computed(() => {
   const d = new Date(currentDate.value + 'T00:00:00')
   const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
   const today = new Date().toISOString().split('T')[0]
-  if (currentDate.value === today) return '📅 今天'
+  if (currentDate.value === today) return '今天'
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
-  if (currentDate.value === yesterday.toISOString().split('T')[0]) return '📅 昨天'
-  return `📅 ${d.getMonth() + 1}月${d.getDate()}日 · ${weekdays[d.getDay()]}`
+  if (currentDate.value === yesterday.toISOString().split('T')[0]) return '昨天'
+  return `${d.getMonth() + 1}月${d.getDate()}日 · ${weekdays[d.getDay()]}`
 })
 
 // 打卡保存后（刷新列表 + 日历）
