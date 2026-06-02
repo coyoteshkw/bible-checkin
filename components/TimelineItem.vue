@@ -1,9 +1,6 @@
 <template>
-  <div class="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-200 overflow-hidden">
-    <!-- 左侧彩色装饰条 -->
-    <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-400"></div>
-
-    <div class="pl-4 pr-3 py-3.5">
+  <div class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+    <div class="px-3 py-3.5">
       <div class="flex justify-between items-start gap-2">
         <div class="flex-1 min-w-0 space-y-1.5">
           <!-- 书卷名徽章 + 时间 -->
@@ -20,8 +17,8 @@
           </div>
 
           <!-- 笔记（引用风格） -->
-          <p v-if="item.note" class="text-sm text-gray-500 italic border-l-2 border-emerald-200 pl-2.5 ml-0.5">
-            “{{ item.note }}”
+          <p v-if="item.note" class="text-sm text-gray-500">
+            {{ item.note }}
           </p>
         </div>
 
