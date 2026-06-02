@@ -1,5 +1,5 @@
 <template>
-  <div class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+  <div class="group bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
     <div class="px-3 py-3.5">
       <div class="flex justify-between items-start gap-2">
         <div class="flex-1 min-w-0 space-y-1.5">
@@ -25,15 +25,15 @@
         <!-- 操作按钮 -->
         <div class="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pt-1">
           <button @click="$emit('edit', item)" title="编辑"
-            class="p-1.5 text-gray-300 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all">
+            class="p-1.5 text-gray-300 dark:text-gray-600 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all">
             <Pencil class="w-3.5 h-3.5" />
           </button>
           <button @click="$emit('share', item)" title="生成卡片"
-            class="p-1.5 text-gray-300 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all">
+            class="p-1.5 text-gray-300 dark:text-gray-600 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-all">
             <Image class="w-3.5 h-3.5" />
           </button>
           <button @click="$emit('deleteRequest', item)" title="删除"
-            class="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+            class="p-1.5 text-gray-300 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all">
             <Trash2 class="w-3.5 h-3.5" />
           </button>
         </div>

@@ -10,14 +10,14 @@
     <div class="mt-3">
       <!-- 月份导航 -->
       <div class="flex items-center justify-between mb-3">
-        <button @click="prevMonth" class="p-1 text-gray-400 hover:text-emerald-500 transition-colors">←</button>
-        <span class="text-sm font-medium text-gray-700">{{ year }}年{{ month }}月</span>
-        <button @click="nextMonth" class="p-1 text-gray-400 hover:text-emerald-500 transition-colors">→</button>
+        <button @click="prevMonth" class="p-1 text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors">←</button>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ year }}年{{ month }}月</span>
+        <button @click="nextMonth" class="p-1 text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors">→</button>
       </div>
 
       <!-- 星期行 -->
       <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-1">
-        <span v-for="d in weekdays" :key="d">{{ d }}</span>
+        <span v-for="d in weekdays" :key="d" class="dark:text-gray-500">{{ d }}</span>
       </div>
 
       <!-- 日期网格 -->
@@ -31,9 +31,9 @@
             class="text-center py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
             :class="{
               'bg-emerald-500 text-white font-medium hover:bg-emerald-600': day.dateStr === activeDate,
-              'bg-emerald-100 text-emerald-700 hover:bg-emerald-200': day.checked && day.dateStr !== activeDate,
-              'text-gray-600 hover:bg-gray-100': !day.checked && day.dateStr !== activeDate,
-              'text-gray-300': day.isFuture
+              'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800': day.checked && day.dateStr !== activeDate,
+              'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !day.checked && day.dateStr !== activeDate,
+              'text-gray-300 dark:text-gray-700': day.isFuture
             }"
             :disabled="day.isFuture"
           >

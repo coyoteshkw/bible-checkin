@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center gap-2">
-    <div class="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+    <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
       <div
         class="h-full rounded-full transition-all duration-500"
         :class="colorClass"

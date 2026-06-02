@@ -9,12 +9,12 @@
             class="rounded-full ring-2 z-10"
             :class="group.isToday
               ? 'w-3 h-3 bg-emerald-500 ring-emerald-100'
-              : 'w-2.5 h-2.5 bg-gray-300 ring-gray-50'"
+              : 'w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 ring-gray-50 dark:ring-gray-950'"
           ></div>
           <div
             v-if="gi < grouped.length - 1 || hasMore"
             class="w-0.5 flex-1 mt-1"
-            :class="group.isToday ? 'bg-emerald-200' : 'bg-gray-200'"
+            :class="group.isToday ? 'bg-emerald-200 dark:bg-emerald-800' : 'bg-gray-200 dark:bg-gray-700'"
           ></div>
         </div>
 
@@ -25,7 +25,7 @@
               :class="group.isToday ? 'text-emerald-600' : 'text-gray-500'">
               {{ formatDateLabel(group.date) }}
             </h3>
-            <span class="text-xs text-gray-300">{{ group.items.length }} 条</span>
+            <span class="text-xs text-gray-300 dark:text-gray-600">{{ group.items.length }} 条</span>
           </div>
           <div class="space-y-2">
             <TimelineItem
@@ -44,7 +44,7 @@
     <!-- 加载更多 -->
     <div v-if="hasMore && grouped.length > 0" class="flex gap-3">
       <div class="flex flex-col items-center w-6 flex-shrink-0">
-        <div class="w-0.5 h-6 bg-gray-200"></div>
+        <div class="w-0.5 h-6 bg-gray-200 dark:bg-gray-700"></div>
       </div>
       <div class="flex-1 pb-4">
         <button

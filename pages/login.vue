@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 transition-colors">
     <div class="w-full max-w-sm">
       <div class="text-center mb-8">
         <BookOpen class="w-12 h-12 text-emerald-500 mx-auto mb-2" />
@@ -7,7 +7,7 @@
         <p class="text-gray-400 text-sm mt-1">登录你的账号</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="bg-white rounded-xl shadow-sm p-6 space-y-4">
+      <form @submit.prevent="handleLogin" class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 space-y-4 transition-colors">
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">邮箱</label>
           <input

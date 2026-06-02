@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
+  <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm transition-colors">
     <button
       @click="toggleExpand"
       class="w-full px-4 py-3 flex items-center justify-between text-sm font-medium transition-colors"
@@ -76,7 +76,7 @@
       </div>
 
       <!-- 预览 -->
-      <div v-if="form.book && form.chapter_start" class="bg-emerald-50 rounded-lg p-3 text-sm text-emerald-800">
+      <div v-if="form.book && form.chapter_start" class="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg p-3 text-sm text-emerald-800 dark:text-emerald-300">
         <BookOpen class="w-4 h-4 inline-block" /> <strong>{{ previewText }}</strong>
       </div>
 

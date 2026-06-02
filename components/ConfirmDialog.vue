@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="$emit('cancel')">
-      <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
         <div class="p-6 text-center">
           <Trash2 class="w-12 h-12 text-red-400 mx-auto mb-3" />
           <h3 class="text-lg font-bold text-gray-800 mb-2">{{ title }}</h3>

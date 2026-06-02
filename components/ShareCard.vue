@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-sm w-full overflow-hidden transition-colors">
     <!-- 卡片预览 -->
-    <div ref="cardEl" class="p-6 bg-gradient-to-br from-emerald-50 to-white">
+    <div ref="cardEl" class="p-6 bg-gradient-to-br from-emerald-50 dark:from-emerald-900/30 to-white dark:to-gray-900">
       <div class="text-center mb-4">
         <BookOpen class="w-10 h-10 text-emerald-500 mx-auto" />
         <h3 class="text-lg font-bold text-gray-800 mt-1">今日读经</h3>

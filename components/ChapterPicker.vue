@@ -86,7 +86,7 @@ function chapterClass(ch: number): Record<string, boolean> {
   )
   return {
     'bg-emerald-500 text-white font-medium shadow-sm': isInRange,
-    'bg-gray-50 text-gray-600 hover:bg-gray-100': !isInRange
+    'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700': !isInRange
   }
 }
 

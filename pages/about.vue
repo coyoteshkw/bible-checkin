@@ -11,8 +11,8 @@
       <p class="text-lg text-gray-500 font-medium">coyoteshkw</p>
 
       <!-- 分割线 -->
-      <div class="border-t border-gray-100 pt-6">
-        <p class="text-sm text-gray-600 leading-relaxed max-w-md mx-auto">
+      <div class="border-t border-gray-100 dark:border-gray-800 pt-6">
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed max-w-md mx-auto">
           我制作这个应用是为了方便记录每日的圣经打卡。
         </p>
         <p class="text-sm text-gray-600 leading-relaxed max-w-md mx-auto mt-3">
@@ -21,8 +21,8 @@
       </div>
 
       <!-- 反馈 -->
-      <div class="border-t border-gray-100 pt-6">
-        <h2 class="text-sm font-bold text-gray-600 mb-3">反馈</h2>
+      <div class="border-t border-gray-100 dark:border-gray-800 pt-6">
+        <h2 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-3">反馈</h2>
         <p class="text-sm text-gray-500">
           如果你有任何的意见或想法，可以发送到这个邮箱
         </p>
@@ -33,8 +33,8 @@
       </div>
 
       <!-- 底部 -->
-      <div class="border-t border-gray-100 pt-6">
-        <NuxtLink to="/" class="text-sm text-gray-400 hover:text-emerald-500 transition-colors">
+      <div class="border-t border-gray-100 dark:border-gray-800 pt-6">
+        <NuxtLink to="/" class="text-sm text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors">
           ← 返回打卡
         </NuxtLink>
       </div>

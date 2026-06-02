@@ -3,7 +3,7 @@
     <button
       @click="open = !open"
       type="button"
-      class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-left flex justify-between items-center bg-white hover:border-emerald-300 transition-colors"
+      class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-left flex justify-between items-center bg-white dark:bg-gray-800 hover:border-emerald-300 transition-colors dark:text-gray-100"
     >
       <span :class="selected ? 'text-gray-800' : 'text-gray-400'">
         {{ selected || '选择书卷...' }}
@@ -13,17 +13,17 @@
       </svg>
     </button>
 
-    <div v-if="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+    <div v-if="open" class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
       <div v-for="t in bibleData" :key="t.name">
-        <div class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 sticky top-0">
+        <div class="px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 sticky top-0">
           {{ t.name }}
         </div>
         <button
           v-for="book in t.books"
           :key="book.id"
           @click="selectBook(book.name)"
-          class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 transition-colors"
-          :class="{ 'bg-emerald-50 text-emerald-700 font-medium': selected === book.name }"
+          class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors"
+          :class="{ 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-medium': selected === book.name }"
         >
           {{ book.name }}
         </button>

@@ -3,7 +3,7 @@
     <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2"><BarChart3 class="w-6 h-6 text-emerald-500" /> 阅读进度</h1>
 
     <!-- 总进度 -->
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+    <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 mb-6 transition-colors">
       <div class="flex justify-between items-center mb-2">
         <span class="text-sm font-bold text-gray-700">整本圣经</span>
         <span class="text-2xl font-bold text-emerald-600">{{ progress.total?.percentage || 0 }}%</span>
@@ -16,7 +16,7 @@
 
     <!-- 按卷查看 -->
     <div class="space-y-6">
-      <div v-for="t in progress.testaments" :key="t.name" class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+      <div v-for="t in progress.testaments" :key="t.name" class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 transition-colors">
         <h2 class="text-sm font-bold text-gray-600 mb-3">{{ t.name }}（{{ t.books.length }} 卷）</h2>
 
         <div class="space-y-2">
@@ -24,8 +24,8 @@
             v-for="book in t.books"
             :key="book.id"
             @click="toggleBook(book.id)"
-            class="rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-            :class="{ 'bg-emerald-50': book.done }"
+            class="rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            :class="{ 'bg-emerald-50 dark:bg-emerald-900/30': book.done }"
           >
             <div class="flex items-center gap-3 px-2 py-2">
               <span class="text-xs w-20 text-gray-500 font-medium truncate">{{ book.name }}</span>
@@ -42,7 +42,7 @@
                 v-for="ch in book.totalChapters"
                 :key="ch"
                 class="text-center text-xs py-1 rounded"
-                :class="isChapterRead(book.name, ch) ? 'bg-emerald-200 text-emerald-800' : 'bg-gray-100 text-gray-400'"
+                :class="isChapterRead(book.name, ch) ? 'bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-200' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'"
               >
                 {{ ch }}
               </div>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- 已读完的书卷 -->
-    <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+    <div class="mt-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 transition-colors">
       <h2 class="text-sm font-bold text-gray-600 mb-3">🏆 已读完的书卷</h2>
       <div v-if="finishedBooks.length" class="flex flex-wrap gap-2">
         <span v-for="b in finishedBooks" :key="b.id" class="text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">
