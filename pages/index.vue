@@ -153,15 +153,51 @@ function onCheckInSaved() {
   fetchProgress()
 }
 
-// 切换日期
-function onSelectDate(date: string) {
+// 切换日期 — 滚动到时间线对应位置，不在当前视图中则加载更多
+async function onSelectDate(date: string) {
   currentDate.value = date
   fetchDateCheckIns()
-  // 滚动到时间线中对应日期
-  nextTick(() => {
-    const el = document.getElementById('timeline-date-' + date)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  })
+  await scrollToTimelineDate(date)
+}
+
+async function scrollToTimelineDate(date: string) {
+  await nextTick()
+  const el = document.getElementById('timeline-date-' + date)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
+  // 不在当前加载范围内 → 逐批加载更多直到找到
+  while (hasMore.value) {
+    await loadMoreBatch()
+    await nextTick()
+    const found = document.getElementById('timeline-date-' + date)
+    if (found) {
+      found.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+  }
+}
+
+// 加载一批（返回 Promise 供 scrollToTimelineDate 复用）
+async function loadMoreBatch(): Promise<void> {
+  if (loadingMore.value || !timelineCheckIns.value.length) return
+  loadingMore.value = true
+  try {
+    const oldest = [...timelineCheckIns.value].sort(
+      (a, b) => a.date.localeCompare(b.date)
+    )[0]
+    const data = await $fetch(`/api/checkins?before=${oldest.date}`)
+    const newItems = data.checkIns || []
+    if (newItems.length === 0) {
+      hasMore.value = false
+    } else {
+      timelineCheckIns.value = [...timelineCheckIns.value, ...newItems]
+    }
+  } catch {}
+  finally {
+    loadingMore.value = false
+  }
 }
 
 // 返回顶部
@@ -198,26 +234,9 @@ async function fetchRecentTimeline() {
   } catch {}
 }
 
-// 加载更多历史
+// 加载更多历史（由 Timeline 底部按钮触发）
 async function loadMore() {
-  if (loadingMore.value || !timelineCheckIns.value.length) return
-  loadingMore.value = true
-  try {
-    // 找最早日期作为 before 参数
-    const oldest = [...timelineCheckIns.value].sort(
-      (a, b) => a.date.localeCompare(b.date)
-    )[0]
-    const data = await $fetch(`/api/checkins?before=${oldest.date}`)
-    const newItems = data.checkIns || []
-    if (newItems.length === 0) {
-      hasMore.value = false
-    } else {
-      timelineCheckIns.value = [...timelineCheckIns.value, ...newItems]
-    }
-  } catch {}
-  finally {
-    loadingMore.value = false
-  }
+  await loadMoreBatch()
 }
 
 // 获取统计
