@@ -13,6 +13,9 @@
         <NuxtLink to="/progress" class="text-gray-500 hover:text-emerald-600 transition-colors">
           进度
         </NuxtLink>
+        <NuxtLink to="/about" class="text-gray-500 hover:text-emerald-600 transition-colors">
+          关于
+        </NuxtLink>
         <span class="text-gray-300">|</span>
         <span class="text-gray-600">{{ user?.username }}</span>
         <button @click="handleLogout" class="text-gray-400 hover:text-red-500 text-xs transition-colors">
