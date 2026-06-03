@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppHeader v-if="user && route.path.startsWith('/app')" />
+    <AppHeader v-if="user && (route.path.startsWith('/app') || route.path === '/progress' || route.path === '/about')" />
     <NuxtPage />
   </div>
 </template>
