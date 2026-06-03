@@ -106,7 +106,14 @@
 <script setup lang="ts">
 useHead({ title: '圣经打卡 - 首页' })
 import { CalendarIcon, ArrowUp } from 'lucide-vue-next'
-const { user } = useAuth()
+const { user, loading } = useAuth()
+
+// 未登录用户跳转到宣传页
+watchEffect(() => {
+  if (!loading.value && !user.value) {
+    navigateTo('/landing')
+  }
+})
 
 // 响应式检测桌面端
 const isDesktop = ref(false)
