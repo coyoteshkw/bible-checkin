@@ -60,8 +60,9 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: '圣经打卡 - 注册' })
 import { BookOpen } from 'lucide-vue-next'
-definePageMeta({ title: '注册', layout: false })
+definePageMeta({ layout: false })
 
 const { register } = useAuth()
 const router = useRouter()

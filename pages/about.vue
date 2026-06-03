@@ -43,6 +43,6 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ title: '关于' })
+useHead({ title: '圣经打卡 - 关于' })
 import { BookOpen } from 'lucide-vue-next'
 </script>

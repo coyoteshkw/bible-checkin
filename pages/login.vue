@@ -49,8 +49,9 @@
 </template>
 
 <script setup lang="ts">
+useHead({ title: '圣经打卡 - 登录' })
 import { BookOpen } from 'lucide-vue-next'
-definePageMeta({ title: '登录', layout: false })
+definePageMeta({ layout: false })
 
 const { login } = useAuth()
 const router = useRouter()
