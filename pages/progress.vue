@@ -2,7 +2,28 @@
   <div class="max-w-3xl mx-auto px-4 py-6">
     <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2"><BarChart3 class="w-6 h-6 text-emerald-500" /> 阅读进度</h1>
 
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 mb-6 transition-colors">
+        <div class="flex justify-between items-center mb-3">
+          <div class="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        </div>
+        <div class="h-2.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full animate-pulse mb-3"></div>
+        <div class="h-4 w-36 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+      </div>
+      <div v-for="i in 2" :key="i" class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 mb-4 transition-colors">
+        <div class="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-4"></div>
+        <div v-for="j in 4" :key="j" class="flex items-center gap-3 px-2 py-2">
+          <div class="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          <div class="flex-1 h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full animate-pulse"></div>
+          <div class="h-4 w-14 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+        </div>
+      </div>
+    </template>
+
     <!-- 总进度 -->
+    <template v-if="!loading">
     <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 mb-6 transition-colors">
       <div class="flex justify-between items-center mb-2">
         <span class="text-sm font-bold text-gray-700">整本圣经</span>
@@ -62,6 +83,7 @@
       </div>
       <p v-else class="text-xs text-gray-300">还没有读完的书卷，继续加油！</p>
     </div>
+    </template>
   </div>
 </template>
 
@@ -72,7 +94,9 @@ const progress = ref<any>({ total: { percentage: 0, read: 0, total: 1189 }, test
 const expandedBooks = ref(new Set<number>())
 const allCheckIns = ref<any[]>([])
 
-// 已读完的书卷
+
+
+const loading = ref(true)
 const finishedBooks = computed(() => {
   const books: any[] = []
   for (const t of progress.value.testaments || []) {
@@ -83,7 +107,6 @@ const finishedBooks = computed(() => {
   return books
 })
 
-// 判断某章是否已读
 function isChapterRead(bookName: string, chapter: number): boolean {
   return allCheckIns.value.some((ci: any) => {
     if (ci.book !== bookName) return false
@@ -93,12 +116,8 @@ function isChapterRead(bookName: string, chapter: number): boolean {
 }
 
 function toggleBook(id: number) {
-  if (expandedBooks.value.has(id)) {
-    expandedBooks.value.delete(id)
-  } else {
-    expandedBooks.value.add(id)
-  }
-  // 刷新，将 Set 替换为新引用以触发响应式
+  if (expandedBooks.value.has(id)) { expandedBooks.value.delete(id) }
+  else { expandedBooks.value.add(id) }
   expandedBooks.value = new Set(expandedBooks.value)
 }
 
@@ -110,6 +129,6 @@ onMounted(async () => {
     ])
     progress.value = progressData
     allCheckIns.value = checkinData.checkIns || []
-  } catch {}
+  } catch {} finally { loading.value = false }
 })
 </script>

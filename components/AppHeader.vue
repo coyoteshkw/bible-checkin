@@ -41,8 +41,8 @@
           <Sun v-if="!isDark" class="w-4 h-4" />
           <Moon v-else class="w-4 h-4 text-amber-400" />
         </button>
-        <button @click="handleLogout" class="text-gray-400 dark:text-gray-500 hover:text-red-500 text-xs transition-colors">
-          退出
+        <button @click="handleLogout" :disabled="loggingOut" class="text-gray-400 dark:text-gray-500 hover:text-red-500 disabled:text-gray-300 text-xs transition-colors">
+          {{ loggingOut ? '退出中...' : '退出' }}
         </button>
       </nav>
     </div>
@@ -66,6 +66,7 @@ const { isDark, toggle } = useDarkMode()
 
 const menuOpen = ref(false)
 const showClearConfirm = ref(false)
+const loggingOut = ref(false)
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 
 function onMenuEnter() {
@@ -80,6 +81,7 @@ function onMenuLeave() {
 }
 
 async function handleLogout() {
+  loggingOut.value = true
   await logout()
 }
 

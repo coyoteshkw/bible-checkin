@@ -48,7 +48,7 @@
         <CheckInForm :date="currentDate" :edit-item="editingItem" @saved="onCheckInSaved" @cancel-edit="editingItem = null" />
 
         <Timeline
-          :check-ins="timelineCheckIns" :has-more="hasMore" :loading="loadingMore"
+          :check-ins="timelineCheckIns" :has-more="hasMore" :loading="timelineLoading"
           @delete-request="handleDeleteRequest" @edit="handleEdit" @share="handleShare" @load-more="loadMore"
         />
       </div>
@@ -98,6 +98,7 @@ const showBackToTop = ref(false)
 const timelineCheckIns = ref<any[]>([])
 const hasMore = ref(true)
 const loadingMore = ref(false)
+const timelineLoading = ref(true)
 
 const formatTitleDate = computed(() => {
   const d = new Date(currentDate.value + 'T00:00:00')
@@ -138,7 +139,7 @@ onMounted(() => { window.addEventListener('scroll', onScroll) })
 onUnmounted(() => { window.removeEventListener('scroll', onScroll) })
 
 async function fetchDateCheckIns() { try { const data = await $fetch(`/api/checkins?date=${currentDate.value}`); checkIns.value = data.checkIns || [] } catch {} }
-async function fetchRecentTimeline() { try { const data = await $fetch('/api/checkins'); timelineCheckIns.value = data.checkIns || []; hasMore.value = (data.checkIns || []).length > 0 } catch {} }
+async function fetchRecentTimeline() { try { const data = await $fetch('/api/checkins'); timelineCheckIns.value = data.checkIns || []; hasMore.value = (data.checkIns || []).length > 0 } catch {} finally { timelineLoading.value = false } }
 async function loadMore() { await loadMoreBatch() }
 async function fetchStats() { try { const data = await $fetch('/api/checkins/stats'); stats.value = data } catch {} }
 async function fetchProgress() { try { const data = await $fetch('/api/progress'); progressPercent.value = data.total?.percentage || 0 } catch {} }
