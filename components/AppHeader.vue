@@ -1,13 +1,13 @@
 <template>
   <header class="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-40 transition-colors">
     <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-      <NuxtLink to="/" class="flex items-center gap-2 font-bold text-gray-800">
+      <NuxtLink to="/app" class="flex items-center gap-2 font-bold text-gray-800">
         <BookOpen class="w-5 h-5 text-emerald-500" />
         <span class="hidden sm:inline">圣经打卡</span>
       </NuxtLink>
 
       <nav class="flex items-center gap-4 text-sm">
-        <NuxtLink to="/" class="text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition-colors">
+        <NuxtLink to="/app" class="text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition-colors">
           打卡
         </NuxtLink>
         <NuxtLink to="/progress" class="text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition-colors">

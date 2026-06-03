@@ -34,7 +34,7 @@
 
       <!-- 底部 -->
       <div class="border-t border-gray-100 dark:border-gray-800 pt-6">
-        <NuxtLink to="/" class="text-sm text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors">
+        <NuxtLink to="/app" class="text-sm text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors">
           ← 返回打卡
         </NuxtLink>
       </div>

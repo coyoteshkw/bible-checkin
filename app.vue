@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppHeader v-if="user && route.path !== '/landing' && !route.path.startsWith('/login') && !route.path.startsWith('/register')" />
+    <AppHeader v-if="user && route.path.startsWith('/app')" />
     <NuxtPage />
   </div>
 </template>
@@ -22,11 +22,12 @@ onMounted(() => {
   initDark()
 })
 
-// 未登录时重定向到登录页或宣传页
+// 未登录时保护需要登录的路由
 watchEffect(() => {
   if (!loading.value && !user.value) {
-    const publicPages = ['/', '/login', '/register', '/landing']
-    if (!publicPages.includes(useRoute().path)) {
+    const publicPages = ['/', '/login', '/register']
+    const path = useRoute().path
+    if (!publicPages.includes(path) && !path.startsWith('/app')) {
       navigateTo('/login')
     }
   }
