@@ -1,4 +1,3 @@
-import { defineEventHandler, readBody, createError, setCookie } from 'h3'
 import bcrypt from 'bcryptjs'
 import { getDb } from '../../db/index'
 
@@ -18,22 +17,20 @@ export default defineEventHandler(async (event) => {
 
   const db = await getDb()
 
-  // 检查邮箱/用户名是否已注册
-  const existing = await db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username)
+  const existing = (await db.query('SELECT id FROM users WHERE email = ? OR username = ?', [email, username])).rows[0]
   if (existing) {
     throw createError({ statusCode: 409, statusMessage: '邮箱或用户名已被注册' })
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)
-  const result = await db.prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)').run(username, email, hashedPassword)
+  const result = await db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword])
 
-  // 创建 session
-  const { token } = await createSession(result.lastInsertRowid as number)
+  const { token } = await createSession(result.lastInsertRowid!)
   setCookie(event, 'session_token', token, {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24 * 30 // 30 天
+    maxAge: 60 * 60 * 24 * 30
   })
 
   return { success: true, user: { id: result.lastInsertRowid, username, email } }

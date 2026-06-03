@@ -1,70 +1,135 @@
-import { createClient } from '@libsql/client'
 import { defineNitroPlugin } from 'nitropack/runtime/plugin'
+import type Database from 'better-sqlite3'
 
-// ====== Wrapper 让 libsql 提供类似 better-sqlite3 的 API ======
-class DbWrapper {
-  private client: ReturnType<typeof createClient>
+// ====== 统一数据库接口 ======
+export interface DbResult {
+  rows: Record<string, any>[]
+  lastInsertRowid?: number
+}
 
-  constructor(client: ReturnType<typeof createClient>) {
-    this.client = client
+export interface DbAdapter {
+  query(sql: string, params?: any[]): Promise<DbResult>
+  execute(sql: string, params?: any[]): Promise<DbResult>
+  exec(sql: string): Promise<void>
+}
+
+// ====== 本地适配器（better-sqlite3）======
+let sqliteDb: Database.Database | null = null
+
+async function getLocalAdapter(): Promise<DbAdapter> {
+  const betterSqlite3 = (await import('better-sqlite3')).default
+  const path = await import('path')
+  const fs = await import('fs')
+
+  if (!sqliteDb) {
+    const dbDir = path.resolve(process.cwd(), '.data')
+    if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true })
+    sqliteDb = new betterSqlite3(path.join(dbDir, 'bible.db'))
+    sqliteDb.pragma('journal_mode = WAL')
   }
+  const db = sqliteDb
+  return {
+    query(sql: string, params?: any[]) {
+      const stmt = db.prepare(sql)
+      const rows = params ? stmt.all(...params) : stmt.all()
+      return Promise.resolve({ rows: rows as any[] })
+    },
+    execute(sql: string, params?: any[]) {
+      const stmt = db.prepare(sql)
+      const info = params ? stmt.run(...params) : stmt.run()
+      return Promise.resolve({ rows: [], lastInsertRowid: info.lastInsertRowid as number })
+    },
+    exec(sql: string) {
+      db.exec(sql)
+      return Promise.resolve()
+    }
+  }
+}
 
-  prepare(sql: string) {
+// ====== Turso HTTP 适配器（纯 fetch，无 native 依赖）======
+function getTursoAdapter(): DbAdapter {
+  const url = process.env.TURSO_DB_URL!
+  const token = process.env.TURSO_DB_TOKEN!
+
+  // 把 ? 参数转为 Turso 的命名参数 $1 $2 ...
+  function sqlWithParams(sql: string, params?: any[]): { sql: string; args: { type: string; value: any }[] } {
+    if (!params || params.length === 0) return { sql, args: [] }
+    // 把 ? 替换为 ?N
+    let idx = 0
+    const converted = sql.replace(/\?/g, () => `?${++idx}`)
     return {
-      all: (params?: (string | number | bigint | null)[]) =>
-        this.client.execute({ sql, args: params as any[] }).then(r => r.rows),
-      get: (params?: (string | number | bigint | null)[]) =>
-        this.client.execute({ sql, args: params as any[] }).then(r => r.rows[0]),
-      run: (params?: (string | number | bigint | null)[]) =>
-        this.client.execute({ sql, args: params as any[] }).then(r => ({
-          lastInsertRowid: r.lastInsertRowid // 保持 bigint，调用处用 Number() 转
-        }))
+      sql: converted,
+      args: params.map(v => ({ type: typeof v === 'number' ? 'integer' : 'text', value: v ?? null }))
     }
   }
 
-  exec(sql: string) {
-    return this.client.execute(sql).then(() => {})
+  return {
+    async query(sql: string, params?: any[]) {
+      const { sql: convertedSql, args } = sqlWithParams(sql, params)
+      const res = await fetch(`${url}/v2/pipeline`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          requests: [{ type: 'execute', stmt: { sql: convertedSql, args } }]
+        })
+      })
+      const data: any = await res.json()
+      const result = data?.results?.[0]?.response?.result
+      if (!result) {
+        // 检查错误
+        const err = data?.results?.[0]?.response?.error
+        throw new Error(err?.message || JSON.stringify(data))
+      }
+      return {
+        rows: result.cols ? parseColsToRows(result.cols, result.rows) : [],
+        lastInsertRowid: result.last_insert_rowid
+      }
+    },
+    async execute(sql: string, params?: any[]) {
+      return this.query(sql, params)
+    },
+    async exec(sql: string) {
+      await this.query(sql)
+    }
   }
 }
 
-// ====== 懒初始化 ======
-let initPromise: Promise<void> | null = null
-let db: DbWrapper | null = null
-
-export async function getDb(): Promise<DbWrapper> {
-  if (!db) {
-    if (!initPromise) initPromise = initDb()
-    await initPromise
-  }
-  return db!
+function parseColsToRows(cols: { name: string }[], rows: any[][]): Record<string, any>[] {
+  return rows.map(row => {
+    const obj: Record<string, any> = {}
+    cols.forEach((col, i) => { obj[col.name] = row[i]?.value ?? null })
+    return obj
+  })
 }
 
-async function initDb() {
-  const url = process.env.TURSO_DB_URL || ':memory:'
-  const config: any = { url }
-  if (process.env.TURSO_DB_TOKEN) config.authToken = process.env.TURSO_DB_TOKEN
-  const client = createClient(config)
+// ====== 选择适配器 ======
+const useTurso = !!process.env.TURSO_DB_URL && !!process.env.TURSO_DB_TOKEN
 
-  db = new DbWrapper(client)
+let adapterPromise: Promise<DbAdapter> | null = null
 
-  // 建表 — 每条语句单独执行（libsql 客户端不支持多语句）
-  const statements = [
-    `CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
-    `CREATE TABLE IF NOT EXISTS sessions (id TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
-    `CREATE TABLE IF NOT EXISTS check_ins (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id), date TEXT NOT NULL, book TEXT NOT NULL, chapter_start INTEGER NOT NULL, chapter_end INTEGER, verse_start INTEGER, verse_end INTEGER, note TEXT DEFAULT '', created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
-    `CREATE INDEX IF NOT EXISTS idx_check_ins_user_date ON check_ins(user_id, date)`,
-    `CREATE INDEX IF NOT EXISTS idx_check_ins_user_book ON check_ins(user_id, book)`
-  ]
-  for (const sql of statements) {
-    await db.exec(sql)
+export async function getDb(): Promise<DbAdapter> {
+  if (!adapterPromise) {
+    adapterPromise = initDb().then(a => {
+      console.log(`[DB] ${useTurso ? 'Turso remote' : 'SQLite local'} initialized`)
+      return a
+    })
   }
-
-  console.log(`[DB] Turso initialized (${process.env.TURSO_DB_URL ? 'remote' : 'in-memory'})`)
+  return adapterPromise
 }
 
-// 插件只在本地开发时打印信息，不阻塞建表
-export default defineNitroPlugin(() => {
-  console.log('[DB] Plugin loaded — lazy init on first query')
-})
+async function initDb(): Promise<DbAdapter> {
+  const adapter = useTurso ? getTursoAdapter() : await getLocalAdapter()
 
+  await adapter.exec(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))`)
+  await adapter.exec(`CREATE TABLE IF NOT EXISTS sessions (id TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), created_at TEXT NOT NULL DEFAULT (datetime('now')))`)
+  await adapter.exec(`CREATE TABLE IF NOT EXISTS check_ins (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id), date TEXT NOT NULL, book TEXT NOT NULL, chapter_start INTEGER NOT NULL, chapter_end INTEGER, verse_start INTEGER, verse_end INTEGER, note TEXT DEFAULT '', created_at TEXT NOT NULL DEFAULT (datetime('now')))`)
+  await adapter.exec(`CREATE INDEX IF NOT EXISTS idx_check_ins_user_date ON check_ins(user_id, date)`)
+  await adapter.exec(`CREATE INDEX IF NOT EXISTS idx_check_ins_user_book ON check_ins(user_id, book)`)
 
+  return adapter
+}
+
+export default defineNitroPlugin(() => {})

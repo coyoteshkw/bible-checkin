@@ -1,4 +1,3 @@
-import { defineEventHandler, readBody, createError, setCookie } from 'h3'
 import bcrypt from 'bcryptjs'
 import { getDb } from '../../db/index'
 
@@ -11,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = await getDb()
-  const user = await db.prepare('SELECT id, username, email, password FROM users WHERE email = ?').get(email) as any
+  const user = (await db.query('SELECT id, username, email, password FROM users WHERE email = ?', [email])).rows[0] as any
 
   if (!user) {
     throw createError({ statusCode: 401, statusMessage: '邮箱或密码错误' })

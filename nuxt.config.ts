@@ -7,10 +7,7 @@ export default defineNuxtConfig({
     }
   },
   nitro: {
-    plugins: ['~/server/db/index.ts'],
-    externals: {
-      trace: false
-    }
+    plugins: ['~/server/db/index.ts']
   },
   runtimeConfig: {
     sessionSecret: process.env.NUXT_SESSION_SECRET || 'dev-secret-change-in-production'

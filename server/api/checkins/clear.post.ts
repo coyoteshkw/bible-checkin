@@ -4,7 +4,6 @@ export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const db = await getDb()
 
-  await db.prepare('DELETE FROM check_ins WHERE user_id = ?').run(user.id)
-
+  await db.execute('DELETE FROM check_ins WHERE user_id = ?', [user.id])
   return { success: true }
 })
