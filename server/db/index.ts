@@ -48,7 +48,10 @@ async function getLocalAdapter(): Promise<DbAdapter> {
 
 // ====== Turso HTTP 适配器（纯 fetch，无 native 依赖）======
 function getTursoAdapter(): DbAdapter {
-  const url = process.env.TURSO_DB_URL!
+  // 支持 libsql:// 和 https:// 两种 URL 格式
+  let url = process.env.TURSO_DB_URL!.replace(/^libsql:/, 'https:')
+  // 确保末尾没有斜杠
+  url = url.replace(/\/+$/, '')
   const token = process.env.TURSO_DB_TOKEN!
 
   // 把 ? 参数转为 Turso 的命名参数 $1 $2 ...
