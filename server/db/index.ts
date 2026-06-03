@@ -54,15 +54,18 @@ function getTursoAdapter(): DbAdapter {
   url = url.replace(/\/+$/, '')
   const token = process.env.TURSO_DB_TOKEN!
 
-  // 把 ? 参数转为 Turso 的命名参数 $1 $2 ...
-  function sqlWithParams(sql: string, params?: any[]): { sql: string; args: { type: string; value: any }[] } {
+  // 把参数转为 Turso HTTP API 要求的格式（value 必须为字符串）
+  function sqlWithParams(sql: string, params?: any[]): { sql: string; args: { type: string; value: string | null }[] } {
     if (!params || params.length === 0) return { sql, args: [] }
-    // 把 ? 替换为 ?N
     let idx = 0
     const converted = sql.replace(/\?/g, () => `?${++idx}`)
     return {
       sql: converted,
-      args: params.map(v => ({ type: typeof v === 'number' ? 'integer' : 'text', value: v ?? null }))
+      args: params.map(v => {
+        if (v === null || v === undefined) return { type: 'null', value: null }
+        if (typeof v === 'number') return { type: 'integer', value: String(v) }
+        return { type: 'text', value: String(v) }
+      })
     }
   }
 
