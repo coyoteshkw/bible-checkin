@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ title: '进度' })
 import { BarChart3 } from 'lucide-vue-next'
 const progress = ref<any>({ total: { percentage: 0, read: 0, total: 1189 }, testaments: [] })
 const expandedBooks = ref(new Set<number>())

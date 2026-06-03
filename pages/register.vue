@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { BookOpen } from 'lucide-vue-next'
-definePageMeta({ layout: false })
+definePageMeta({ title: '注册', layout: false })
 
 const { register } = useAuth()
 const router = useRouter()

@@ -6,6 +6,14 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+  title: '圣经打卡',
+  titleTemplate: (title) => title ? `圣经打卡 - ${title}` : '圣经打卡',
+  link: [
+    { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
+  ]
+})
+
 const { user, loading, init } = useAuth()
 const { init: initDark } = useDarkMode()
 

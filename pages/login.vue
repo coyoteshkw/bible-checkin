@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { BookOpen } from 'lucide-vue-next'
-definePageMeta({ layout: false })
+definePageMeta({ title: '登录', layout: false })
 
 const { login } = useAuth()
 const router = useRouter()

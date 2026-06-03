@@ -104,6 +104,7 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ title: '首页' })
 import { CalendarIcon, ArrowUp } from 'lucide-vue-next'
 const { user } = useAuth()
 

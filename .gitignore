@@ -8,4 +8,5 @@ node_modules/
 .agents/
 .reasonix/
 skills-lock.json
+docs/
 .worktrees/
