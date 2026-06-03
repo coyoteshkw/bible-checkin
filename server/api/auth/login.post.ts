@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = getDb()
-  const user = db.prepare('SELECT id, username, email, password FROM users WHERE email = ?').get(email) as any
+  const user = await db.prepare('SELECT id, username, email, password FROM users WHERE email = ?').get(email) as any
 
   if (!user) {
     throw createError({ statusCode: 401, statusMessage: '邮箱或密码错误' })
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: '邮箱或密码错误' })
   }
 
-  const { token } = createSession(user.id)
+  const { token } = await createSession(user.id)
   setCookie(event, 'session_token', token, {
     httpOnly: true,
     sameSite: 'lax',

@@ -19,16 +19,16 @@ export default defineEventHandler(async (event) => {
   const db = getDb()
 
   // 检查邮箱/用户名是否已注册
-  const existing = db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username)
+  const existing = await db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username)
   if (existing) {
     throw createError({ statusCode: 409, statusMessage: '邮箱或用户名已被注册' })
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)
-  const result = db.prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)').run(username, email, hashedPassword)
+  const result = await db.prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)').run(username, email, hashedPassword)
 
   // 创建 session
-  const { token } = createSession(result.lastInsertRowid as number)
+  const { token } = await createSession(result.lastInsertRowid as number)
   setCookie(event, 'session_token', token, {
     httpOnly: true,
     sameSite: 'lax',

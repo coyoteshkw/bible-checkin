@@ -1,6 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
+  tailwindcss: {
+    config: {
+      darkMode: 'class'
+    }
+  },
   nitro: {
     plugins: ['~/server/db/index.ts']
   },

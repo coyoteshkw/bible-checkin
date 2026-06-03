@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📖 圣经打卡 — 自由记录每日读经进度</title>
+    <meta
+      name="description"
+      content="圣经打卡是一款自由的读经进度记录工具。不受每日计划限制，按自己的节奏逐章逐节记录，实时查看整本圣经阅读进度。"
+    />
+    <meta
+      name="keywords"
+      content="圣经打卡,读经进度,圣经阅读,每日读经,圣经记录,圣经计划"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" href="./bible-svgrepo-com.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://bible-checkin.app" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="圣经打卡 — 自由记录每日读经进度" />
+    <meta
+      property="og:description"
+      content="不受每日计划限制，按自己的节奏逐章逐节记录读经进度。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bible-checkin.app" />
+    <meta property="og:locale" content="zh_CN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="圣经打卡 — 自由记录每日读经进度" />
+    <meta
+      name="twitter:description"
+      content="不受每日计划限制，按自己的节奏逐章逐节记录读经进度。"
+    />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "圣经打卡",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web",
+        "description": "一款自由的圣经读经进度记录工具。不受每日计划限制，按自己的节奏逐章逐节记录，实时查看整本圣经阅读进度。",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "CNY"
+        }
+      }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ========== Reset & Base ========== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background: #fafaf9;
+        color: #292524;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* ========== Variables ========== */
+      :root {
+        --emerald-50: #ecfdf5;
+        --emerald-100: #d1fae5;
+        --emerald-200: #a7f3d0;
+        --emerald-400: #34d399;
+        --emerald-500: #10b981;
+        --emerald-600: #059669;
+        --emerald-700: #047857;
+        --emerald-800: #065f46;
+        --emerald-900: #064e3b;
+        --amber-400: #fbbf24;
+        --amber-500: #f59e0b;
+        --stone-50: #fafaf9;
+        --stone-100: #f5f5f4;
+        --stone-200: #e7e5e4;
+        --stone-300: #d6d3d1;
+        --stone-400: #a8a29e;
+        --stone-500: #78716c;
+        --stone-600: #57534e;
+        --stone-700: #44403c;
+        --stone-800: #292524;
+        --stone-900: #1c1917;
+      }
+
+      /* ========== Typography ========== */
+      h1,
+      h2,
+      h3 {
+        font-family: "Noto Serif SC", serif;
+        line-height: 1.3;
+      }
+
+      /* ========== Sections ========== */
+      section {
+        padding: 5rem 1.5rem;
+      }
+      .container {
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+
+      /* ========== Hero ========== */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          var(--emerald-900) 0%,
+          #022c22 50%,
+          var(--emerald-800) 100%
+        );
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            ellipse at 20% 50%,
+            rgba(52, 211, 153, 0.15) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse at 80% 20%,
+            rgba(251, 191, 36, 0.08) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+      .hero-glow {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(16, 185, 129, 0.12) 0%,
+          transparent 70%
+        );
+        top: -200px;
+        right: -200px;
+        pointer-events: none;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 48rem;
+        padding: 1.5rem;
+      }
+      .hero-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+      }
+      .hero h1 {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 900;
+        color: white;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+      }
+      .hero h1 em {
+        font-style: normal;
+        background: linear-gradient(
+          135deg,
+          var(--emerald-400),
+          var(--amber-400)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero p {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: rgba(255, 255, 255, 0.7);
+        max-width: 36rem;
+        margin: 0 auto 2.5rem;
+        font-weight: 300;
+        line-height: 1.8;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 2.2rem;
+        border-radius: 999px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        background: linear-gradient(
+          135deg,
+          var(--emerald-400),
+          var(--emerald-500)
+        );
+        color: var(--emerald-900);
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 2.2rem;
+        border-radius: 999px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .btn-secondary:hover {
+        border-color: var(--emerald-400);
+        color: var(--emerald-400);
+        transform: translateY(-2px);
+      }
+
+      /* ========== Scroll indicator ========== */
+      .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        animation: fadeInUp 1s 0.5s both;
+      }
+      .scroll-dot {
+        width: 1.5px;
+        height: 2rem;
+        background: linear-gradient(to bottom, var(--emerald-400), transparent);
+        animation: scrollPulse 2s ease-in-out infinite;
+      }
+      @keyframes scrollPulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scaleY(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scaleY(1.3);
+        }
+      }
+
+      /* ========== Features ========== */
+      .features {
+        background: white;
+      }
+      .features-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
+      .features-header h2 {
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+        color: var(--stone-800);
+        margin-bottom: 0.75rem;
+      }
+      .features-header p {
+        color: var(--stone-500);
+        max-width: 32rem;
+        margin: 0 auto;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .feature-card {
+        background: var(--stone-50);
+        border-radius: 1.25rem;
+        padding: 2rem;
+        border: 1px solid var(--stone-100);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .feature-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--emerald-400),
+          var(--emerald-500)
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .feature-card:hover::after {
+        opacity: 1;
+      }
+      .feature-card:hover {
+        border-color: var(--emerald-200);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+      }
+      .feature-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .feature-icon.green {
+        background: var(--emerald-100);
+      }
+      .feature-icon.amber {
+        background: #fef3c7;
+      }
+      .feature-icon.stone {
+        background: var(--stone-200);
+      }
+      .feature-icon.rose {
+        background: #ffe4e6;
+      }
+      .feature-icon.sky {
+        background: #e0f2fe;
+      }
+      .feature-icon.purple {
+        background: #f3e8ff;
+      }
+      .feature-card h3 {
+        font-size: 1.1rem;
+        color: var(--stone-800);
+        margin-bottom: 0.5rem;
+      }
+      .feature-card p {
+        font-size: 0.9rem;
+        color: var(--stone-500);
+        line-height: 1.7;
+      }
+
+      /* ========== Screenshot / Mockup ========== */
+      .showcase {
+        background: linear-gradient(180deg, white, var(--stone-50));
+        text-align: center;
+      }
+      .showcase h2 {
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+        color: var(--stone-800);
+        margin-bottom: 0.75rem;
+      }
+      .showcase > .container > p {
+        color: var(--stone-500);
+        margin-bottom: 3rem;
+      }
+      .mockup {
+        max-width: 56rem;
+        margin: 0 auto;
+        background: var(--stone-800);
+        border-radius: 1.5rem;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow: hidden;
+      }
+      .mockup-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 1.5rem;
+      }
+      .mockup-header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .mockup-logo {
+        width: 1.8rem;
+        height: 1.8rem;
+        background: var(--emerald-500);
+        border-radius: 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+      }
+      .mockup-title {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+      }
+      .mockup-nav {
+        display: flex;
+        gap: 1.2rem;
+        font-size: 0.75rem;
+      }
+      .mockup-nav span {
+        color: rgba(255, 255, 255, 0.35);
+        cursor: default;
+      }
+      .mockup-nav span.active {
+        color: var(--emerald-400);
+      }
+      .mockup-body {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 640px) {
+        .mockup-body {
+          grid-template-columns: 1fr;
+        }
+      }
+      .mockup-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .mockup-sidebar-item {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0.5rem;
+        background: rgba(255, 255, 255, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .mockup-sidebar-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--emerald-500);
+        flex-shrink: 0;
+      }
+      .mockup-sidebar-text {
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        flex: 1;
+      }
+      .mockup-sidebar-text.wide {
+        width: 80%;
+      }
+      .mockup-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .mockup-card {
+        padding: 0.7rem 0.9rem;
+        border-radius: 0.6rem;
+        background: rgba(255, 255, 255, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .mockup-card-line {
+        height: 5px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .mockup-card-line.l1 {
+        width: 40%;
+      }
+      .mockup-card-line.l2 {
+        width: 25%;
+      }
+      .mockup-card-line.l3 {
+        width: 55%;
+      }
+      .mockup-tag {
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.6rem;
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--emerald-400);
+        flex-shrink: 0;
+      }
+
+      /* ========== Stats ========== */
+      .stats {
+        background: var(--emerald-800);
+        position: relative;
+        overflow: hidden;
+      }
+      .stats::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 80% 50%,
+          rgba(16, 185, 129, 0.1) 0%,
+          transparent 60%
+        );
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2rem;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+      .stats-item .num {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        font-family: "Noto Serif SC", serif;
+        color: white;
+      }
+      .stats-item .num em {
+        font-style: normal;
+        color: var(--emerald-400);
+      }
+      .stats-item .label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+      }
+
+      /* ========== CTA ========== */
+      .cta {
+        background: white;
+        text-align: center;
+      }
+      .cta h2 {
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+        color: var(--stone-800);
+        margin-bottom: 0.75rem;
+      }
+      .cta p {
+        color: var(--stone-500);
+        max-width: 28rem;
+        margin: 0 auto 2rem;
+      }
+      .cta .btn-primary {
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+      }
+
+      /* ========== Footer ========== */
+      footer {
+        background: var(--stone-900);
+        color: rgba(255, 255, 255, 0.4);
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        font-size: 0.85rem;
+      }
+      footer a {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      footer a:hover {
+        color: var(--emerald-400);
+      }
+      footer .links {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      /* ========== Animations ========== */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-in {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .animate-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ========== FAQ ========== */
+      .faq {
+        background: var(--stone-50);
+      }
+      .faq h2 {
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        color: var(--stone-800);
+        margin-bottom: 3rem;
+      }
+      .faq-list {
+        max-width: 40rem;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      details.faq-item {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid var(--stone-100);
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      details.faq-item[open] {
+        border-color: var(--emerald-200);
+      }
+      details.faq-item summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        color: var(--stone-700);
+        list-style: none;
+        font-size: 0.95rem;
+      }
+      details.faq-item summary::after {
+        content: "+";
+        font-size: 1.2rem;
+        color: var(--stone-400);
+        transition: transform 0.2s;
+      }
+      details.faq-item[open] summary::after {
+        transform: rotate(45deg);
+      }
+      details.faq-item p {
+        color: var(--stone-500);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--stone-100);
+        margin-top: 0.75rem;
+      }
+      details.faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ====== Hero ====== -->
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <span
+          class="hero-icon"
+          data-lucide="book-open"
+          style="
+            width: 4rem;
+            height: 4rem;
+            color: var(--emerald-400);
+            margin: 0 auto 1.5rem;
+            display: block;
+          "
+        ></span>
+        <h1>按你的节奏，<br /><em>读完一整本圣经</em></h1>
+        <p>
+          不受每日读经计划的束缚。自由选择你今天读的章节，逐章逐节记录，<br />
+          实时追踪你距离读完一整本圣经还有多少。
+        </p>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary">
+            <span>开始打卡</span>
+            <i
+              data-lucide="arrow-right"
+              style="width: 1.1rem; height: 1.1rem"
+            ></i>
+          </a>
+          <a href="#features" class="btn-secondary">了解详情</a>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <span>向下滚动</span>
+        <div class="scroll-dot"></div>
+      </div>
+    </section>
+
+    <!-- ====== Features ====== -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-header">
+          <h2>为什么选择圣经打卡</h2>
+          <p>
+            我们解决了一个真实存在的痛点：现有的圣经软件都只有固定的读经计划
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card animate-in">
+            <div class="feature-icon green">
+              <i
+                data-lucide="target"
+                style="width: 1.5rem; height: 1.5rem; color: var(--emerald-600)"
+              ></i>
+            </div>
+            <h3>自由选择进度</h3>
+            <p>
+              不受每日计划限制。今天想读创世记1-5章？还是只想读诗篇23篇？完全由你决定。
+            </p>
+          </div>
+
+          <div class="feature-card animate-in">
+            <div class="feature-icon amber">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 1.5rem; height: 1.5rem; color: #d97706"
+              ></i>
+            </div>
+            <h3>实时阅读进度</h3>
+            <p>
+              每卷书已读的百分比，整本圣经的总进度条，一目了然看到自己距离读完还有多远。
+            </p>
+          </div>
+
+          <div class="feature-card animate-in">
+            <div class="feature-icon stone">
+              <i
+                data-lucide="calendar"
+                style="width: 1.5rem; height: 1.5rem; color: var(--stone-500)"
+              ></i>
+            </div>
+            <h3>日历打卡记录</h3>
+            <p>
+              哪天读了、哪天没读，日历上清清楚楚。点击任意日期查看当天的详细读经记录。
+            </p>
+          </div>
+
+          <div class="feature-card animate-in">
+            <div class="feature-icon sky">
+              <i
+                data-lucide="pencil"
+                style="width: 1.5rem; height: 1.5rem; color: #0284c7"
+              ></i>
+            </div>
+            <h3>逐节精确记录</h3>
+            <p>支持同章内、跨章节的记录。从创世记1:5到2:3，精确到每一节。</p>
+          </div>
+
+          <div class="feature-card animate-in">
+            <div class="feature-icon rose">
+              <i
+                data-lucide="message-square"
+                style="width: 1.5rem; height: 1.5rem; color: #e11d48"
+              ></i>
+            </div>
+            <h3>默想笔记</h3>
+            <p>
+              每条打卡可以记录你的感动和思考。生成精美的打卡卡片，方便分享给朋友。
+            </p>
+          </div>
+
+          <div class="feature-card animate-in">
+            <div class="feature-icon purple">
+              <i
+                data-lucide="smartphone"
+                style="width: 1.5rem; height: 1.5rem; color: #9333ea"
+              ></i>
+            </div>
+            <h3>全平台使用</h3>
+            <p>
+              手机、平板、电脑都可以用。注册账号后数据自动跟随，随时随地记录。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Stats ====== -->
+    <section class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stats-item animate-in">
+            <div class="num">66</div>
+            <div class="label">书卷总数</div>
+          </div>
+          <div class="stats-item animate-in">
+            <div class="num">1,<em>189</em></div>
+            <div class="label">总章数</div>
+          </div>
+          <div class="stats-item animate-in">
+            <div class="num"><em>0</em> 元</div>
+            <div class="label">完全免费</div>
+          </div>
+          <div class="stats-item animate-in">
+            <div class="num">你<em>决定</em></div>
+            <div class="label">阅读计划</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Showcase ====== -->
+    <section class="showcase">
+      <div class="container">
+        <h2>一目了然的使用体验</h2>
+        <p>简洁清晰的操作界面，让记录读经变成一种享受</p>
+        <div class="mockup animate-in">
+          <div class="mockup-header">
+            <div class="mockup-header-left">
+              <div class="mockup-logo">
+                <i
+                  data-lucide="book-open"
+                  style="width: 1rem; height: 1rem; color: white"
+                ></i>
+              </div>
+              <span class="mockup-title">圣经打卡</span>
+            </div>
+            <div class="mockup-nav">
+              <span class="active">打卡</span>
+              <span>进度</span>
+              <span>关于</span>
+            </div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-sidebar">
+              <div class="mockup-sidebar-item">
+                <div class="mockup-sidebar-dot"></div>
+                <div class="mockup-sidebar-text wide"></div>
+              </div>
+              <div class="mockup-sidebar-item">
+                <div
+                  class="mockup-sidebar-dot"
+                  style="background: var(--stone-600)"
+                ></div>
+                <div class="mockup-sidebar-text" style="width: 60%"></div>
+              </div>
+              <div class="mockup-sidebar-item">
+                <div
+                  class="mockup-sidebar-dot"
+                  style="background: var(--stone-600)"
+                ></div>
+                <div class="mockup-sidebar-text" style="width: 45%"></div>
+              </div>
+              <div
+                class="mockup-sidebar-item"
+                style="background: rgba(16, 185, 129, 0.08)"
+              >
+                <div
+                  class="mockup-sidebar-dot"
+                  style="background: var(--emerald-500)"
+                ></div>
+                <div style="font-size: 0.65rem; color: var(--emerald-400)">
+                  已读 12%
+                </div>
+              </div>
+            </div>
+            <div class="mockup-main">
+              <div class="mockup-card">
+                <span class="mockup-tag">创世记</span>
+                <div class="mockup-card-line l1"></div>
+                <i
+                  data-lucide="pencil"
+                  style="
+                    width: 0.7rem;
+                    height: 0.7rem;
+                    color: rgba(255, 255, 255, 0.25);
+                    margin-left: auto;
+                  "
+                ></i>
+                <i
+                  data-lucide="trash-2"
+                  style="
+                    width: 0.7rem;
+                    height: 0.7rem;
+                    color: rgba(255, 255, 255, 0.25);
+                  "
+                ></i>
+              </div>
+              <div class="mockup-card">
+                <span class="mockup-tag">诗篇</span>
+                <div class="mockup-card-line l3"></div>
+                <i
+                  data-lucide="pencil"
+                  style="
+                    width: 0.7rem;
+                    height: 0.7rem;
+                    color: rgba(255, 255, 255, 0.25);
+                    margin-left: auto;
+                  "
+                ></i>
+              </div>
+              <div class="mockup-card">
+                <span class="mockup-tag">马太福音</span>
+                <div class="mockup-card-line l2"></div>
+              </div>
+              <div
+                class="mockup-card"
+                style="
+                  border: 1px dashed rgba(255, 255, 255, 0.08);
+                  background: rgba(16, 185, 129, 0.04);
+                "
+              >
+                <span
+                  style="
+                    font-size: 0.65rem;
+                    color: var(--emerald-400);
+                    font-weight: 500;
+                  "
+                  >+ 添加打卡记录</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== FAQ ====== -->
+    <section class="faq">
+      <div class="container">
+        <h2>常见问题</h2>
+        <div class="faq-list">
+          <details class="faq-item animate-in">
+            <summary>这个应用和现有的圣经软件有什么区别？</summary>
+            <p>
+              大多数圣经软件提供的是固定的每日读经计划，你必须按照计划每天读固定章节。而这个应用让你自由选择今天读什么，逐章逐节记录，不受任何计划束缚。
+            </p>
+          </details>
+          <details class="faq-item animate-in">
+            <summary>可以多人使用吗？需要付费吗？</summary>
+            <p>
+              完全免费。你可以注册账号使用，数据跟随你的账号。目前是个人使用的工具，没有团队功能。
+            </p>
+          </details>
+          <details class="faq-item animate-in">
+            <summary>是否支持所有圣经译本？</summary>
+            <p>
+              目前支持中文和合本。你只需要记录书卷和章节，不需要输入经文原文，所以理论上任何译本都适用。
+            </p>
+          </details>
+          <details class="faq-item animate-in">
+            <summary>我的数据安全吗？</summary>
+            <p>
+              密码使用 bcrypt 加密存储，登录使用 session
+              cookie。你的打卡数据只属于你自己，不会被公开或分享。
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== CTA ====== -->
+    <section class="cta">
+      <div class="container">
+        <h2>今天就开始记录</h2>
+        <p>不设定计划，不追赶进度。按你的节奏，读完一整本圣经。</p>
+        <a href="#" class="btn-primary">
+          <span>立即开始</span>
+          <span>→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ====== Footer ====== -->
+    <footer>
+      <div class="links">
+        <a href="#">首页</a>
+        <a href="#features">功能</a>
+        <a href="#">关于</a>
+        <a href="mailto:coyoteshkw@proton.me">联系我们</a>
+      </div>
+      <p>© 2026 圣经打卡 · 一款自由的读经记录工具</p>
+    </footer>
+
+    <script>
+      // 滚动触发的入场动画
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      );
+      document
+        .querySelectorAll(".animate-in")
+        .forEach((el) => observer.observe(el));
+      // 渲染 Lucide 图标
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

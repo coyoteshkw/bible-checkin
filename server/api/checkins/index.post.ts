@@ -1,7 +1,7 @@
 import { getDb } from '../../db/index'
 
 export default defineEventHandler(async (event) => {
-  const user = requireAuth(event)
+  const user = await requireAuth(event)
   const body = await readBody(event)
   const db = getDb()
 
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const result = db.prepare(`
+  const result = await db.prepare(`
     INSERT INTO check_ins (user_id, date, book, chapter_start, chapter_end, verse_start, verse_end, note)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
@@ -34,6 +34,6 @@ export default defineEventHandler(async (event) => {
     note || ''
   )
 
-  const checkIn = db.prepare('SELECT * FROM check_ins WHERE id = ?').get(result.lastInsertRowid)
+  const checkIn = await db.prepare('SELECT * FROM check_ins WHERE id = ?').get(result.lastInsertRowid)
   return { checkIn }
 })

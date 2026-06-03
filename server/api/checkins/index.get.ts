@@ -2,13 +2,13 @@ import { defineEventHandler, getQuery } from 'h3'
 import { getDb } from '../../db/index'
 
 export default defineEventHandler(async (event) => {
-  const user = requireAuth(event)
+  const user = await requireAuth(event)
   const query = getQuery(event)
   const db = getDb()
 
   // 按日期查：?date=2025-01-20
   if (query.date) {
-    const rows = db.prepare(`
+    const rows = await db.prepare(`
       SELECT * FROM check_ins
       WHERE user_id = ? AND date = ?
       ORDER BY created_at DESC
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // 按月份查（日历高亮用）：?month=2025-01
   if (query.month) {
     const startDate = `${query.month}-01`
-    const rows = db.prepare(`
+    const rows = await db.prepare(`
       SELECT DISTINCT date FROM check_ins
       WHERE user_id = ? AND date >= ? AND date < date(?, '+1 month')
       ORDER BY date
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
   const limit = parseInt((query.limit as string) || '7', 10)
 
   if (before) {
-    const rows = db.prepare(`
+    const rows = await db.prepare(`
       SELECT * FROM check_ins
       WHERE user_id = ? AND date < ?
       ORDER BY date DESC, created_at DESC
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
 
   // 默认返回最近 N 天（按时间范围，不是按条数）
   const days = parseInt((query.days as string) || '7', 10)
-  const rows = db.prepare(`
+  const rows = await db.prepare(`
     SELECT * FROM check_ins
     WHERE user_id = ? AND date >= date('now', ?)
     ORDER BY date DESC, created_at DESC

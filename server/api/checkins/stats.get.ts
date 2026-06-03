@@ -2,12 +2,12 @@ import { defineEventHandler } from 'h3'
 import { getDb } from '../../db/index'
 
 export default defineEventHandler(async (event) => {
-  const user = requireAuth(event)
+  const user = await requireAuth(event)
   const db = getDb()
 
   // 本月打卡天数
   const monthStart = `date('now', 'start of month')`
-  const thisMonth = db.prepare(`
+  const thisMonth = await db.prepare(`
     SELECT COUNT(DISTINCT date) as count
     FROM check_ins
     WHERE user_id = ? AND date >= ${monthStart}
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     d.setDate(d.getDate() - i)
     const dateStr = d.toISOString().split('T')[0]
 
-    const found = db.prepare('SELECT id FROM check_ins WHERE user_id = ? AND date = ? LIMIT 1').get(user.id, dateStr)
+    const found = await db.prepare('SELECT id FROM check_ins WHERE user_id = ? AND date = ? LIMIT 1').get(user.id, dateStr)
     if (found) {
       streak++
     } else {

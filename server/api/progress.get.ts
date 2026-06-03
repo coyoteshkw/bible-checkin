@@ -3,13 +3,13 @@ import { getDb } from '../db/index'
 import { BIBLE_DATA, getAllBooks, getTotalChapters } from '../db/bible-data'
 
 export default defineEventHandler(async (event) => {
-  const user = requireAuth(event)
+  const user = await requireAuth(event)
   const db = getDb()
 
   const allBooks = getAllBooks()
 
   // 获取所有打卡记录
-  const rows = db.prepare(`
+  const rows = await db.prepare(`
     SELECT book, chapter_start, chapter_end FROM check_ins
     WHERE user_id = ?
   `).all(user.id) as { book: string; chapter_start: number; chapter_end: number | null }[]
