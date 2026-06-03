@@ -3,7 +3,7 @@ import { getDb } from '../../db/index'
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const body = await readBody(event)
-  const db = getDb()
+  const db = await getDb()
 
   const { date, book, chapter_start, chapter_end, verse_start, verse_end, note } = body
 

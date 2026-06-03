@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: '密码至少 6 个字符' })
   }
 
-  const db = getDb()
+  const db = await getDb()
 
   // 检查邮箱/用户名是否已注册
   const existing = await db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username)

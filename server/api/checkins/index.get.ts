@@ -4,7 +4,7 @@ import { getDb } from '../../db/index'
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const query = getQuery(event)
-  const db = getDb()
+  const db = await getDb()
 
   // 按日期查：?date=2025-01-20
   if (query.date) {

@@ -3,7 +3,7 @@ import { getDb } from '../../db/index'
 
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
-  const db = getDb()
+  const db = await getDb()
 
   // 本月打卡天数
   const monthStart = `date('now', 'start of month')`

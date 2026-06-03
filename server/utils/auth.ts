@@ -9,7 +9,7 @@ export function createSessionToken(): string {
 
 // 创建 session
 export async function createSession(userId: number): Promise<{ token: string }> {
-  const db = getDb()
+  const db = await getDb()
   const token = createSessionToken()
   await db.prepare('INSERT INTO sessions (id, user_id) VALUES (?, ?)').run(token, userId)
   return { token }
@@ -17,13 +17,13 @@ export async function createSession(userId: number): Promise<{ token: string }> 
 
 // 删除 session
 export async function deleteSession(token: string): Promise<void> {
-  const db = getDb()
+  const db = await getDb()
   await db.prepare('DELETE FROM sessions WHERE id = ?').run(token)
 }
 
 // 验证 session 并获取用户
 export async function getSessionUser(token: string): Promise<{ id: number; username: string; email: string } | null> {
-  const db = getDb()
+  const db = await getDb()
   const row = await db.prepare(`
     SELECT u.id, u.username, u.email
     FROM sessions s

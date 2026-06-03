@@ -4,7 +4,7 @@ import { BIBLE_DATA, getAllBooks, getTotalChapters } from '../db/bible-data'
 
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
-  const db = getDb()
+  const db = await getDb()
 
   const allBooks = getAllBooks()
 

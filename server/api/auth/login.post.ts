@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: '请填写邮箱和密码' })
   }
 
-  const db = getDb()
+  const db = await getDb()
   const user = await db.prepare('SELECT id, username, email, password FROM users WHERE email = ?').get(email) as any
 
   if (!user) {

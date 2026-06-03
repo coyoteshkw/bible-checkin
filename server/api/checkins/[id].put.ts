@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const id = getRouterParam(event, 'id')
   const body = await readBody(event)
-  const db = getDb()
+  const db = await getDb()
 
   // 确认记录存在且属于当前用户
   const existing = await db.prepare('SELECT * FROM check_ins WHERE id = ? AND user_id = ?').get(id, user.id) as any
