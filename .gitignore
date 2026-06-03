@@ -8,5 +8,6 @@ node_modules/
 .agents/
 .reasonix/
 skills-lock.json
+.context_bridge.md
 docs/
 .worktrees/
