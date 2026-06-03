@@ -78,7 +78,7 @@ async function handleRegister() {
   submitting.value = true
   try {
     await register(username.value, email.value, password.value)
-    router.push('/')
+    router.push('/app')
   } catch (e: any) {
     error.value = e.data?.statusMessage || '注册失败'
   } finally {

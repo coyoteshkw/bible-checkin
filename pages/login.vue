@@ -66,7 +66,7 @@ async function handleLogin() {
   submitting.value = true
   try {
     await login(email.value, password.value)
-    router.push('/')
+    router.push('/app')
   } catch (e: any) {
     error.value = e.data?.statusMessage || '登录失败'
   } finally {
