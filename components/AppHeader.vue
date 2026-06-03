@@ -19,8 +19,8 @@
         <span class="text-gray-300">|</span>
 
         <!-- 用户下拉菜单 -->
-        <div class="relative" @mouseenter="onMenuEnter" @mouseleave="onMenuLeave">
-          <button @click="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
+        <div class="relative" @mouseleave="onMenuLeave">
+          <button @click.stop="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
             {{ user?.username }}
             <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': menuOpen }" />
           </button>

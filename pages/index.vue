@@ -287,6 +287,7 @@ function handleShare(item: any) {
 // 初始化
 onMounted(() => {
   fetchRecentTimeline()
+  fetchDateCheckIns()
   fetchStats()
   fetchProgress()
 })
