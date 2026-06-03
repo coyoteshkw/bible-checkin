@@ -1,5 +1,13 @@
 <template>
   <div class="landing">
+    <!-- 每日金句横幅 -->
+    <div class="daily-verse" v-if="verseText">
+      <div class="verse-inner">
+        <Quote class="verse-icon" style="width:1rem;height:1rem;flex-shrink:0" />
+        <span class="verse-text">{{ verseText }}</span>
+        <span class="verse-ref">{{ verseRef }}</span>
+      </div>
+    </div>
     <!-- Hero -->
     <section class="hero">
       <div class="hero-glow"></div>
@@ -90,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { BookOpen, ArrowRight, Target, BarChart3, Calendar as CalendarIcon, Pencil, MessageSquare, Smartphone } from 'lucide-vue-next'
+import { BookOpen, ArrowRight, Target, BarChart3, Calendar as CalendarIcon, Pencil, MessageSquare, Smartphone, Quote } from 'lucide-vue-next'
 
 useSeoMeta({
   title: '圣经打卡 — 自由记录每日读经进度',
@@ -112,6 +120,20 @@ watchEffect(() => {
     navigateTo('/app')
   }
 })
+
+// ====== 每日金句（本地数据）======
+const dailyVerses = [
+  { text: '不要效法这个世界，只要心意更新而变化，叫你们察验何为神的善良、纯全、可喜悦的旨意。', ref: '罗马书 12:2' },
+  { text: '我靠着那加给我力量的，凡事都能做。', ref: '腓立比书 4:13' },
+  { text: '你当刚强壮胆！不要惧怕，也不要惊惶，因为你无论往哪里去，耶和华你的神必与你同在。', ref: '约书亚记 1:9' },
+  { text: '你要专心仰赖耶和华，不可倚靠自己的聪明，在你一切所行的事上都要认定他，他必指引你的路。', ref: '箴言 3:5-6' },
+  { text: '耶和华是我的牧者，我必不致缺乏。', ref: '诗篇 23:1' }
+]
+
+const dayOfMonth = new Date().getDate()
+const verseData = dailyVerses[(dayOfMonth - 1) % dailyVerses.length]
+const verseText = ref(verseData.text)
+const verseRef = ref(verseData.ref)
 
 const router = useRouter()
 function goApp() {
@@ -157,6 +179,35 @@ const faqs = [
 <style scoped>
 /* 只在此页面生效的样式 */
 .landing { background:#fafaf9; color:#292524; overflow-x:hidden; }
+
+/* 每日金句横幅 */
+.daily-verse {
+  background:linear-gradient(135deg,#064e3b,#065f46);
+  padding:.5rem 1rem;
+  display:flex;
+  justify-content:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.verse-inner {
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  max-width:48rem;
+  color:rgba(255,255,255,.85);
+  font-size:.85rem;
+  line-height:1.5;
+}
+.verse-icon { color:#34d399; flex-shrink:0; }
+.verse-text { font-style:italic; }
+.verse-ref {
+  flex-shrink:0;
+  font-size:.75rem;
+  color:rgba(255,255,255,.4);
+  white-space:nowrap;
+  padding:1px 6px;
+  border-radius:4px;
+  background:rgba(255,255,255,.06);
+}
 .landing :deep(h1), .landing :deep(h2), .landing :deep(h3) { font-family:'Noto Serif SC',serif; line-height:1.3; }
 .container { max-width:72rem; margin:0 auto; }
 section { padding:5rem 1.5rem; }
