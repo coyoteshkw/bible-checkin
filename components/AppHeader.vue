@@ -16,34 +16,36 @@
         <NuxtLink to="/about" class="text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition-colors">
           关于
         </NuxtLink>
-        <span class="text-gray-300">|</span>
-
-        <!-- 用户下拉菜单 -->
-        <div class="relative" @mouseleave="onMenuLeave">
-          <button @click.stop="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
-            {{ user?.username }}
-            <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': menuOpen }" />
-          </button>
-
-          <!-- 下拉框 -->
-          <div v-show="menuOpen"
-            class="absolute right-0 top-full mt-0.5 w-44 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg py-1 z-50"
-            @mouseenter="onMenuEnter" @mouseleave="onMenuLeave">
-            <button @click="showClearConfirm = true; menuOpen = false"
-              class="w-full text-left px-4 py-2.5 text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-2">
-              <Trash2 class="w-4 h-4" />
-              清空进度
-            </button>
-          </div>
-        </div>
-
         <button @click="toggle" class="text-gray-400 dark:text-gray-500 hover:text-amber-500 dark:hover:text-amber-400 text-xs transition-colors p-1" :title="isDark ? '切换浅色' : '切换深色'">
           <Sun v-if="!isDark" class="w-4 h-4" />
           <Moon v-else class="w-4 h-4 text-amber-400" />
         </button>
-        <button @click="handleLogout" :disabled="loggingOut" class="text-gray-400 dark:text-gray-500 hover:text-red-500 disabled:text-gray-300 text-xs transition-colors">
-          {{ loggingOut ? '退出中...' : '退出' }}
-        </button>
+
+        <template v-if="user">
+          <span class="text-gray-300">|</span>
+
+          <!-- 用户下拉菜单 -->
+          <div class="relative" @mouseleave="onMenuLeave">
+            <button @click.stop="menuOpen = !menuOpen" class="text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer">
+              {{ user?.username }}
+              <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': menuOpen }" />
+            </button>
+
+            <div v-show="menuOpen"
+              class="absolute right-0 top-full mt-0.5 w-44 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg py-1 z-50"
+              @mouseenter="onMenuEnter" @mouseleave="onMenuLeave">
+              <button @click="showClearConfirm = true; menuOpen = false"
+                class="w-full text-left px-4 py-2.5 text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-2">
+                <Trash2 class="w-4 h-4" />
+                清空进度
+              </button>
+            </div>
+          </div>
+
+          <button @click="handleLogout" :disabled="loggingOut" class="text-gray-400 dark:text-gray-500 hover:text-red-500 disabled:text-gray-300 text-xs transition-colors">
+            {{ loggingOut ? '退出中...' : '退出' }}
+          </button>
+        </template>
       </nav>
     </div>
 
